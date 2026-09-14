@@ -14,16 +14,17 @@ import {
   Gem
 } from 'lucide-react';
 import { BRAND_CONFIG } from '../config/brandConfig';
-import { WATCH_PRODUCTS } from '../data/watches';
+import { useProducts } from '../context/ProductContext';
 import ProductCard from '../components/ProductCard';
 import QuickViewModal from '../components/QuickViewModal';
 
 const Home = () => {
+  const { products } = useProducts();
   const [quickViewProduct, setQuickViewProduct] = useState(null);
 
-  const featuredWatches = WATCH_PRODUCTS.filter(w => w.featured).slice(0, 4);
-  const newArrivals = WATCH_PRODUCTS.filter(w => w.newArrival).slice(0, 4);
-  const bestSellers = WATCH_PRODUCTS.filter(w => w.bestSeller).slice(0, 4);
+  const featuredWatches = products.filter(w => w.featured).slice(0, 4);
+  const newArrivals = products.filter(w => w.newArrival).slice(0, 4);
+  const bestSellers = products.filter(w => w.bestSeller).slice(0, 4);
 
   const customerReviews = [
     {

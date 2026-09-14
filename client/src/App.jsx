@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { AuthProvider } from './context/AuthContext';
+import { ProductProvider } from './context/ProductContext';
 
 // Components
 import Navbar from './components/Navbar';
@@ -28,6 +29,7 @@ import Orders from './pages/Orders';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Wishlist from './pages/Wishlist';
+import Admin from './pages/Admin';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -35,12 +37,13 @@ function App() {
 
   return (
     <AuthProvider>
-      <CartProvider>
-        <WishlistProvider>
-          <Router>
-            <div className="flex flex-col min-h-screen bg-[#0b0b0d] text-white selection:bg-[#c5a880] selection:text-black">
-              {/* Global Navigation */}
-              <Navbar onOpenSearch={() => setIsSearchOpen(true)} />
+      <ProductProvider>
+        <CartProvider>
+          <WishlistProvider>
+            <Router>
+              <div className="flex flex-col min-h-screen bg-[#0b0b0d] text-white selection:bg-[#c5a880] selection:text-black">
+                {/* Global Navigation */}
+                <Navbar onOpenSearch={() => setIsSearchOpen(true)} />
 
               {/* Global Overlays (Search modal & Cart drawer) */}
               <SearchOverlay 
@@ -69,6 +72,7 @@ function App() {
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/wishlist" element={<Wishlist />} />
+                  <Route path="/admin" element={<Admin />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
@@ -79,8 +83,9 @@ function App() {
           </Router>
         </WishlistProvider>
       </CartProvider>
-    </AuthProvider>
-  );
+    </ProductProvider>
+  </AuthProvider>
+);
 }
 
 export default App;

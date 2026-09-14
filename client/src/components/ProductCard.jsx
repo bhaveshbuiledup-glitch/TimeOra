@@ -13,13 +13,17 @@ const ProductCard = ({ product, onQuickView }) => {
 
   const isFavorited = isInWishlist(product.id);
 
-  const discountPercent = product.discountPrice 
+  const isOutOfStock = Number(product.stock) <= 0;
+  const isOnOffer = Boolean(product.discountPrice && product.discountPrice < product.price);
+
+  const discountPercent = isOnOffer 
     ? Math.round(((product.price - product.discountPrice) / product.price) * 100) 
     : 0;
 
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isOutOfStock) return;
     addToCart(product, 1);
     setAddedAnimation(true);
     setTimeout(() => setAddedAnimation(false), 2000);
@@ -50,19 +54,24 @@ const ProductCard = ({ product, onQuickView }) => {
     >
       {/* Badges Overlay */}
       <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5 pointer-events-none">
-        {product.newArrival && (
+        {isOutOfStock && (
+          <span className="bg-red-600 text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-sm shadow-md">
+            Out of Stock
+          </span>
+        )}
+        {isOnOffer && !isOutOfStock && (
+          <span className="bg-amber-600 text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-sm shadow-md">
+            On Offer • -{discountPercent}%
+          </span>
+        )}
+        {product.newArrival && !isOutOfStock && (
           <span className="bg-[#c5a880] text-black text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-sm shadow-md">
             New
           </span>
         )}
-        {product.bestSeller && (
+        {product.bestSeller && !isOutOfStock && (
           <span className="bg-[#1f1f27] border border-[#c5a880]/40 text-[#c5a880] text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-sm backdrop-blur-md">
             Iconic
-          </span>
-        )}
-        {discountPercent > 0 && (
-          <span className="bg-red-600/90 text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-sm">
-            -{discountPercent}%
           </span>
         )}
       </div>
@@ -146,20 +155,28 @@ const ProductCard = ({ product, onQuickView }) => {
                 </span>
               )}
             </div>
-            <span className="text-[10px] text-emerald-400 font-medium">In Stock • Ready to ship</span>
+            {isOutOfStock ? (
+              <span className="text-[10px] text-red-400 font-medium">Out of Stock</span>
+            ) : isOnOffer ? (
+              <span className="text-[10px] text-amber-300 font-medium">Available • On Offer</span>
+            ) : (
+              <span className="text-[10px] text-emerald-400 font-medium">Available • In Stock</span>
+            )}
           </div>
 
           {/* Add to Cart button */}
           <button
             onClick={handleAddToCart}
-            disabled={addedAnimation}
+            disabled={isOutOfStock || addedAnimation}
             className={`flex items-center justify-center p-2.5 rounded-lg transition-all ${
-              addedAnimation
+              isOutOfStock
+                ? 'bg-[#181820] text-gray-500 border border-[#2a2a35] cursor-not-allowed opacity-50'
+                : addedAnimation
                 ? 'bg-emerald-600 text-white shadow-lg'
                 : 'bg-[#1e1e28] hover:bg-[#c5a880] text-gray-200 hover:text-black border border-[#2a2a38] hover:border-[#c5a880]'
             }`}
-            title="Add to Shopping Bag"
-            aria-label="Add to cart"
+            title={isOutOfStock ? "Out of Stock" : "Add to Shopping Bag"}
+            aria-label={isOutOfStock ? "Out of Stock" : "Add to cart"}
           >
             {addedAnimation ? <Check size={18} /> : <ShoppingBag size={18} />}
           </button>

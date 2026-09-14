@@ -63,14 +63,31 @@ const QuickViewModal = ({ product, onClose }) => {
                 {product.name}
               </h2>
 
-              {/* Price */}
-              <div className="flex items-baseline space-x-3 mb-4">
-                <span className="text-2xl font-bold text-white">
-                  {BRAND_CONFIG.currency}{(product.discountPrice || product.price).toLocaleString()}
-                </span>
-                {product.discountPrice && (
-                  <span className="text-sm text-gray-500 line-through">
-                    {BRAND_CONFIG.currency}{product.price.toLocaleString()}
+              {/* Price & Status */}
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                <div className="flex items-baseline space-x-3">
+                  <span className="text-2xl font-bold text-white">
+                    {BRAND_CONFIG.currency}{(product.discountPrice || product.price).toLocaleString()}
+                  </span>
+                  {product.discountPrice && product.discountPrice < product.price && (
+                    <span className="text-sm text-gray-500 line-through">
+                      {BRAND_CONFIG.currency}{product.price.toLocaleString()}
+                    </span>
+                  )}
+                </div>
+
+                {/* Status Badge */}
+                {product.stock <= 0 || product.status === 'out-of-stock' ? (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-950/80 text-rose-400 border border-rose-800/80">
+                    Out of Stock
+                  </span>
+                ) : (product.onOffer || (product.discountPrice && product.discountPrice < product.price) || product.offerPercent) ? (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-950/80 text-amber-400 border border-amber-800/80">
+                    On Offer {product.offerPercent ? `(-${product.offerPercent}%)` : ''}
+                  </span>
+                ) : (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
+                    Available ({product.stock})
                   </span>
                 )}
               </div>
@@ -127,17 +144,19 @@ const QuickViewModal = ({ product, onClose }) => {
             <div className="space-y-3 pt-2">
               <div className="flex items-center space-x-3">
                 {/* Quantity selector */}
-                <div className="flex items-center border border-[#2a2a35] rounded-lg bg-[#181820]">
+                <div className={`flex items-center border border-[#2a2a35] rounded-lg bg-[#181820] ${(product.stock <= 0 || product.status === 'out-of-stock') ? 'opacity-40 pointer-events-none' : ''}`}>
                   <button 
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-3 py-2 text-gray-400 hover:text-white"
+                    disabled={product.stock <= 0 || product.status === 'out-of-stock'}
+                    className="px-3 py-2 text-gray-400 hover:text-white disabled:opacity-40"
                   >
                     -
                   </button>
                   <span className="px-2 text-sm font-semibold text-white">{quantity}</span>
                   <button 
                     onClick={() => setQuantity(quantity + 1)}
-                    className="px-3 py-2 text-gray-400 hover:text-white"
+                    disabled={product.stock <= 0 || product.status === 'out-of-stock'}
+                    className="px-3 py-2 text-gray-400 hover:text-white disabled:opacity-40"
                   >
                     +
                   </button>
@@ -145,14 +164,18 @@ const QuickViewModal = ({ product, onClose }) => {
 
                 <button
                   onClick={handleAdd}
-                  disabled={added}
+                  disabled={product.stock <= 0 || product.status === 'out-of-stock' || added}
                   className={`flex-1 py-3 px-6 rounded-lg text-xs uppercase tracking-widest font-semibold flex items-center justify-center space-x-2 transition-all ${
-                    added
+                    product.stock <= 0 || product.status === 'out-of-stock'
+                      ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700/60'
+                      : added
                       ? 'bg-emerald-600 text-white'
                       : 'bg-[#c5a880] hover:bg-[#d8be98] text-black shadow-lg shadow-[#c5a880]/20'
                   }`}
                 >
-                  {added ? (
+                  {product.stock <= 0 || product.status === 'out-of-stock' ? (
+                    <span>Out of Stock</span>
+                  ) : added ? (
                     <>
                       <Check size={16} />
                       <span>Added to Bag</span>

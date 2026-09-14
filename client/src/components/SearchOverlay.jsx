@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, X, ArrowRight, Star } from 'lucide-react';
-import { WATCH_PRODUCTS } from '../data/watches';
+import { useProducts } from '../context/ProductContext';
 import { BRAND_CONFIG } from '../config/brandConfig';
 
 const SearchOverlay = ({ isOpen, onClose }) => {
+  const { products } = useProducts();
   const [query, setQuery] = useState('');
   const inputRef = useRef(null);
 
@@ -27,7 +28,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const results = query.trim() === '' ? [] : WATCH_PRODUCTS.filter(item => {
+  const results = query.trim() === '' ? [] : products.filter(item => {
     const q = query.toLowerCase();
     return (
       item.name.toLowerCase().includes(q) ||

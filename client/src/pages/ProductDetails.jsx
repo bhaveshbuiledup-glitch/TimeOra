@@ -19,6 +19,7 @@ import { WATCH_PRODUCTS } from '../data/watches';
 import { BRAND_CONFIG } from '../config/brandConfig';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useProducts } from '../context/ProductContext';
 import ProductCard from '../components/ProductCard';
 
 const ProductDetails = () => {
@@ -26,8 +27,12 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { products } = useProducts();
 
-  const product = WATCH_PRODUCTS.find(p => p.id === id) || WATCH_PRODUCTS[0];
+  const product = products.find(p => String(p.id) === String(id)) || products[0] || WATCH_PRODUCTS[0];
+
+  const isOutOfStock = (product?.stock <= 0 || product?.status === 'out-of-stock');
+  const isOnOffer = Boolean(product?.onOffer || (product?.discountPrice && product.discountPrice < product.price) || product?.offerPercent);
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState(product?.colors?.[0] || 'Standard');
@@ -36,16 +41,17 @@ const ProductDetails = () => {
   const [copiedLink, setCopiedLink] = useState(false);
   const [activeTab, setActiveTab] = useState('specs'); // 'specs', 'craftsmanship', 'shipping'
 
-  const isFavorited = isInWishlist(product.id);
+  const isFavorited = isInWishlist(product?.id);
 
   // Scroll to top on product change
   useEffect(() => {
     window.scrollTo(0, 0);
     setActiveImageIndex(0);
-    if (product.colors?.length) setSelectedColor(product.colors[0]);
+    if (product?.colors?.length) setSelectedColor(product.colors[0]);
   }, [id, product]);
 
   const handleAdd = () => {
+    if (isOutOfStock) return;
     addToCart(product, quantity, selectedColor);
     setAdded(true);
     setTimeout(() => setAdded(false), 2200);
@@ -60,7 +66,7 @@ const ProductDetails = () => {
   };
 
   // Related watches from same category or gender
-  const relatedWatches = WATCH_PRODUCTS.filter(p => p.id !== product.id && (p.category === product.category || p.gender === product.gender)).slice(0, 4);
+  const relatedWatches = products.filter(p => p.id !== product?.id && (p.category === product?.category || p.gender === product?.gender)).slice(0, 4);
 
   const images = product.images || [
     'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200'
@@ -150,15 +156,15 @@ const ProductDetails = () => {
                 <span className="text-xs text-gray-500">({product.reviewsCount} Certified Patron Reviews)</span>
               </div>
 
-              {/* Price Display */}
-              <div className="bg-[#14141c] border border-[#242432] rounded-xl p-5 mb-8 flex items-baseline justify-between">
+              {/* Price Display & Clear Status */}
+              <div className="bg-[#14141c] border border-[#242432] rounded-xl p-5 mb-8 flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <span className="text-xs text-gray-400 uppercase tracking-widest block mb-1">Maison Price</span>
                   <div className="flex items-baseline space-x-3">
                     <span className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
                       {BRAND_CONFIG.currency}{(product.discountPrice || product.price).toLocaleString()}
                     </span>
-                    {product.discountPrice && (
+                    {product.discountPrice && product.discountPrice < product.price && (
                       <span className="text-sm text-gray-500 line-through">
                         {BRAND_CONFIG.currency}{product.price.toLocaleString()}
                       </span>
@@ -167,11 +173,29 @@ const ProductDetails = () => {
                 </div>
 
                 <div className="text-right">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
-                    <Check size={12} className="mr-1" />
-                    {product.stock} In Stock
-                  </span>
-                  <span className="text-[10px] text-gray-400 block mt-1">Available for immediate delivery</span>
+                  {isOutOfStock ? (
+                    <div>
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-950/80 text-rose-400 border border-rose-800/80">
+                        Out of Stock
+                      </span>
+                      <span className="text-[11px] text-rose-300/80 block mt-1">Currently unavailable for order</span>
+                    </div>
+                  ) : isOnOffer ? (
+                    <div>
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-950/80 text-amber-400 border border-amber-800/80">
+                        On Offer {product.offerPercent ? `(-${product.offerPercent}%)` : 'Special'}
+                      </span>
+                      <span className="text-[11px] text-emerald-400 block mt-1">Available • {product.stock} pieces in vault</span>
+                    </div>
+                  ) : (
+                    <div>
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
+                        <Check size={12} className="mr-1" />
+                        Available
+                      </span>
+                      <span className="text-[11px] text-gray-400 block mt-1">{product.stock} In Stock • Immediate delivery</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -208,17 +232,19 @@ const ProductDetails = () => {
               <div className="space-y-4">
                 <div className="flex items-center space-x-4">
                   {/* Quantity Counter */}
-                  <div className="flex items-center border border-[#2c2c3b] rounded-xl bg-[#14141c] px-2 py-1">
+                  <div className={`flex items-center border border-[#2c2c3b] rounded-xl bg-[#14141c] px-2 py-1 ${isOutOfStock ? 'opacity-40 pointer-events-none' : ''}`}>
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white text-lg font-medium"
+                      disabled={isOutOfStock}
+                      className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white text-lg font-medium disabled:opacity-40"
                     >
                       -
                     </button>
                     <span className="w-10 text-center font-bold text-white text-sm">{quantity}</span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white text-lg font-medium"
+                      disabled={isOutOfStock}
+                      className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white text-lg font-medium disabled:opacity-40"
                     >
                       +
                     </button>
@@ -227,14 +253,18 @@ const ProductDetails = () => {
                   {/* Add to Bag Button */}
                   <button
                     onClick={handleAdd}
-                    disabled={added}
+                    disabled={isOutOfStock || added}
                     className={`flex-1 py-4 px-6 rounded-xl text-xs uppercase tracking-[0.2em] font-bold flex items-center justify-center space-x-3 transition-all ${
-                      added
+                      isOutOfStock
+                        ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700/60'
+                        : added
                         ? 'bg-emerald-600 text-white shadow-lg'
                         : 'bg-[#c5a880] hover:bg-[#d8be98] text-black shadow-xl shadow-[#c5a880]/20'
                     }`}
                   >
-                    {added ? (
+                    {isOutOfStock ? (
+                      <span>Out of Stock — Unavailable</span>
+                    ) : added ? (
                       <>
                         <Check size={18} />
                         <span>Added to Shopping Bag</span>

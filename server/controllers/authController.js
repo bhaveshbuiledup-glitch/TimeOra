@@ -12,7 +12,8 @@ const generateToken = (id) => {
 // @access  Public
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, password } = req.body;
+    const email = req.body.email ? req.body.email.toLowerCase().trim() : '';
 
     if (!name || !email || !password) {
       return res.status(400).json({ success: false, message: 'Please provide all required fields' });
@@ -36,7 +37,7 @@ const registerUser = async (req, res) => {
         user: {
           id: user._id,
           name: user.name,
-          email: user.email,
+          email: user.email.toLowerCase(),
           role: user.role,
           membershipTier: user.membershipTier,
         },
@@ -55,7 +56,8 @@ const registerUser = async (req, res) => {
 // @access  Public
 const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { password } = req.body;
+    const email = req.body.email ? req.body.email.toLowerCase().trim() : '';
 
     if (!email || !password) {
       return res.status(400).json({ success: false, message: 'Please provide both email and password' });
@@ -69,7 +71,7 @@ const loginUser = async (req, res) => {
         user: {
           id: user._id,
           name: user.name,
-          email: user.email,
+          email: user.email.toLowerCase(),
           role: user.role,
           membershipTier: user.membershipTier,
         },
@@ -96,7 +98,7 @@ const getUserProfile = async (req, res) => {
         user: {
           id: user._id,
           name: user.name,
-          email: user.email,
+          email: user.email.toLowerCase(),
           role: user.role,
           membershipTier: user.membershipTier,
           shippingAddress: user.shippingAddress,
@@ -110,4 +112,44 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getUserProfile };
+// @desc    Update user profile / admin email
+// @route   PUT /api/auth/profile
+// @access  Private
+const updateUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+      user.name = req.body.name || user.name;
+      if (req.body.email) {
+        user.email = req.body.email.toLowerCase().trim();
+      }
+      if (req.body.password) {
+        user.password = req.body.password;
+      }
+      if (req.body.shippingAddress) {
+        user.shippingAddress = req.body.shippingAddress;
+      }
+
+      const updatedUser = await user.save();
+      res.json({
+        success: true,
+        user: {
+          id: updatedUser._id,
+          name: updatedUser.name,
+          email: updatedUser.email.toLowerCase(),
+          role: updatedUser.role,
+          membershipTier: updatedUser.membershipTier,
+          shippingAddress: updatedUser.shippingAddress,
+        },
+        token: generateToken(updatedUser._id),
+      });
+    } else {
+      res.status(404).json({ success: false, message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile };

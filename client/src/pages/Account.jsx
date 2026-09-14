@@ -49,11 +49,19 @@ const Account = () => {
               <h1 className="text-2xl sm:text-3xl font-['Cinzel'] font-bold text-white mt-0.5">
                 {user.name}
               </h1>
-              <p className="text-xs text-gray-400 mt-0.5">{user.email}</p>
+              <p className="text-xs text-gray-400 mt-0.5 lowercase font-mono">{user.email?.toLowerCase()}</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
+            <Link
+              to="/admin"
+              className="px-5 py-2.5 bg-[#1a1a26] hover:bg-[#c5a880] hover:text-black border border-[#c5a880]/50 text-[#c5a880] text-xs uppercase tracking-wider font-semibold rounded-lg flex items-center space-x-2 transition-all shadow-md"
+            >
+              <Shield size={15} />
+              <span>Admin Panel</span>
+            </Link>
+
             <button
               onClick={handleLogout}
               className="px-5 py-2.5 bg-[#181822] hover:bg-red-950/40 border border-[#2d2d3d] hover:border-red-800 text-gray-300 hover:text-red-400 text-xs uppercase tracking-wider font-semibold rounded-lg flex items-center space-x-2 transition-colors"

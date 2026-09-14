@@ -8,7 +8,8 @@ import {
   Menu, 
   X, 
   Watch, 
-  ChevronRight 
+  ChevronRight,
+  Shield 
 } from 'lucide-react';
 import { BRAND_CONFIG } from '../config/brandConfig';
 import { useCart } from '../context/CartContext';
@@ -167,6 +168,15 @@ const Navbar = ({ onOpenSearch }) => {
                 )}
               </Link>
 
+              {/* Admin Panel Access */}
+              <Link
+                to="/admin"
+                className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-[#181824] border border-[#c5a880]/50 text-[#c5a880] hover:bg-[#c5a880] hover:text-black transition-all text-[11px] font-semibold uppercase tracking-wider shadow-sm"
+                title="Atelier Admin Panel"
+              >
+                <Shield size={12} />
+                <span>Admin</span>
+              </Link>
             </div>
 
           </div>
@@ -214,12 +224,19 @@ const Navbar = ({ onOpenSearch }) => {
               </div>
             </div>
 
-            <div className="pt-6 border-t border-[#22222b] space-y-4">
+            <div className="pt-6 border-t border-[#22222b] space-y-3">
               <Link
                 to={isAuthenticated ? "/account" : "/login"}
                 className="w-full block text-center py-2.5 px-4 bg-[#c5a880] text-black font-semibold text-xs tracking-widest uppercase rounded hover:bg-[#d8be98] transition-colors"
               >
                 {isAuthenticated ? "My Account" : "Sign In / Register"}
+              </Link>
+              <Link
+                to="/admin"
+                className="w-full flex items-center justify-center space-x-2 py-2.5 px-4 bg-[#181822] border border-[#c5a880]/40 text-[#c5a880] font-semibold text-xs tracking-widest uppercase rounded hover:bg-[#222230] transition-colors"
+              >
+                <Shield size={14} />
+                <span>Admin Panel</span>
               </Link>
               <p className="text-center text-xs text-gray-500">
                 {BRAND_CONFIG.tagline}

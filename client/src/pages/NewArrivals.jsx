@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { WATCH_PRODUCTS } from '../data/watches';
+import { useProducts } from '../context/ProductContext';
 import ProductCard from '../components/ProductCard';
 import QuickViewModal from '../components/QuickViewModal';
 import { Sparkles } from 'lucide-react';
 
 const NewArrivals = () => {
+  const { products } = useProducts();
   const [quickViewProduct, setQuickViewProduct] = useState(null);
-  const newProducts = WATCH_PRODUCTS.filter(w => w.newArrival);
+  const newProducts = products.filter(w => w.newArrival);
 
   return (
     <div className="min-h-screen bg-[#0b0b0d] pt-28 pb-24 text-gray-100">

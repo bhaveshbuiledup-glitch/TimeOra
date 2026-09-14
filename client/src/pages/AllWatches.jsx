@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Filter, SlidersHorizontal, ArrowUpDown, X, Search, RotateCcw } from 'lucide-react';
-import { WATCH_PRODUCTS, CATEGORIES, GENDERS } from '../data/watches';
+import { CATEGORIES, GENDERS } from '../data/watches';
+import { useProducts } from '../context/ProductContext';
 import ProductCard from '../components/ProductCard';
 import QuickViewModal from '../components/QuickViewModal';
 import { BRAND_CONFIG } from '../config/brandConfig';
@@ -11,9 +12,10 @@ const AllWatches = ({
   pageTitle = 'All Timepieces',
   pageDescription = 'Explore our complete portfolio of precision-crafted horological masterpieces.' 
 }) => {
+  const { products } = useProducts();
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedGender, setSelectedGender] = useState(initialGender);
-  const [maxPrice, setMaxPrice] = useState(5000);
+  const [maxPrice, setMaxPrice] = useState(10000);
   const [sortBy, setSortBy] = useState('featured'); // 'featured', 'newest', 'price-low', 'price-high', 'popularity'
   const [searchQuery, setSearchQuery] = useState('');
   const [showFiltersMobile, setShowFiltersMobile] = useState(false);
@@ -21,7 +23,7 @@ const AllWatches = ({
 
   // Filter & Sort logic
   const filteredProducts = useMemo(() => {
-    return WATCH_PRODUCTS.filter(product => {
+    return products.filter(product => {
       // Gender filter
       if (selectedGender !== 'All' && product.gender !== selectedGender && product.gender !== 'Unisex') {
         return false;

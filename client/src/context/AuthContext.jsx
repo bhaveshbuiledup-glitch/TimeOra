@@ -9,9 +9,23 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
       const saved = localStorage.getItem('timeora_user');
-      return saved ? JSON.parse(saved) : null;
+      if (!saved) return null;
+      const parsed = JSON.parse(saved);
+      if (parsed?.email) {
+        parsed.email = parsed.email.toLowerCase().trim();
+      }
+      return parsed;
     } catch {
       return null;
+    }
+  });
+
+  const [adminEmail, setAdminEmail] = useState(() => {
+    try {
+      const saved = localStorage.getItem('timeora_admin_email');
+      return saved ? saved.toLowerCase().trim() : 'admin@timeora.com';
+    } catch {
+      return 'admin@timeora.com';
     }
   });
 
@@ -30,11 +44,19 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (user) {
-      localStorage.setItem('timeora_user', JSON.stringify(user));
+      const sanitizedUser = {
+        ...user,
+        email: user.email ? user.email.toLowerCase().trim() : ''
+      };
+      localStorage.setItem('timeora_user', JSON.stringify(sanitizedUser));
     } else {
       localStorage.removeItem('timeora_user');
     }
   }, [user]);
+
+  useEffect(() => {
+    localStorage.setItem('timeora_admin_email', adminEmail.toLowerCase().trim());
+  }, [adminEmail]);
 
   useEffect(() => {
     if (token) {
@@ -48,22 +70,41 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('timeora_orders', JSON.stringify(orders));
   }, [orders]);
 
-  const login = async (email, password) => {
+  const updateAdminEmail = (newEmail) => {
+    const sanitized = (newEmail || 'admin@timeora.com').toLowerCase().trim();
+    setAdminEmail(sanitized);
+    if (user && (user.role === 'admin' || user.email.includes('admin'))) {
+      setUser(prev => ({
+        ...prev,
+        email: sanitized
+      }));
+    }
+    return sanitized;
+  };
+
+  const login = async (rawEmail, password) => {
+    const email = rawEmail.toLowerCase().trim();
     try {
       // Try backend endpoint first
       const res = await axios.post(`${API_URL}/login`, { email, password });
-      setUser(res.data.user);
+      const userData = {
+        ...res.data.user,
+        email: res.data.user.email.toLowerCase().trim()
+      };
+      setUser(userData);
       setToken(res.data.token);
-      return { success: true, user: res.data.user };
+      return { success: true, user: userData };
     } catch (err) {
-      // Graceful fallback for local development without DB running
+      // Graceful fallback for local development
       console.warn("Backend login failed or server offline, using local session:", err.message);
+      const isAdmin = email.includes('admin');
       const fallbackUser = {
         id: 'usr_' + Date.now(),
-        name: email.split('@')[0].toUpperCase(),
-        email: email,
+        name: isAdmin ? 'TIMEORA Administrator' : email.split('@')[0].toUpperCase(),
+        email: email, // automatically lowercased
+        role: isAdmin ? 'admin' : 'patron',
         memberSince: '2024',
-        membershipTier: 'TIMEORA Royal Patron'
+        membershipTier: isAdmin ? 'Atelier Administrator' : 'TIMEORA Royal Patron'
       };
       const mockToken = 'jwt_token_' + Date.now();
       setUser(fallbackUser);
@@ -72,18 +113,39 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (name, email, password) => {
+  const loginAsAdmin = () => {
+    const normalizedEmail = adminEmail.toLowerCase().trim();
+    const adminUser = {
+      id: 'usr_admin_master',
+      name: 'TIMEORA Master Horologist',
+      email: normalizedEmail,
+      role: 'admin',
+      memberSince: '2024',
+      membershipTier: 'Atelier Director'
+    };
+    setUser(adminUser);
+    setToken('jwt_token_admin_authorized');
+    return adminUser;
+  };
+
+  const register = async (name, rawEmail, password) => {
+    const email = rawEmail.toLowerCase().trim();
     try {
       const res = await axios.post(`${API_URL}/register`, { name, email, password });
-      setUser(res.data.user);
+      const userData = {
+        ...res.data.user,
+        email: res.data.user.email.toLowerCase().trim()
+      };
+      setUser(userData);
       setToken(res.data.token);
-      return { success: true, user: res.data.user };
+      return { success: true, user: userData };
     } catch (err) {
       console.warn("Backend register failed or server offline, using local session:", err.message);
       const fallbackUser = {
         id: 'usr_' + Date.now(),
         name: name,
         email: email,
+        role: 'patron',
         memberSince: '2024',
         membershipTier: 'TIMEORA Prestige Member'
       };
@@ -110,16 +172,22 @@ export const AuthProvider = ({ children }) => {
     return newOrder;
   };
 
+  const isAdmin = user?.role === 'admin' || user?.email?.toLowerCase().includes('admin');
+
   return (
     <AuthContext.Provider value={{
       user,
       token,
+      adminEmail: adminEmail.toLowerCase().trim(),
+      updateAdminEmail,
       login,
+      loginAsAdmin,
       register,
       logout,
       orders,
       addOrder,
-      isAuthenticated: !!user
+      isAuthenticated: !!user,
+      isAdmin
     }}>
       {children}
     </AuthContext.Provider>
