@@ -4,7 +4,7 @@ import { WATCH_PRODUCTS } from '../data/watches';
 
 const ProductContext = createContext();
 
-const API_URL = 'http://localhost:5000/api/products';
+const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/products`;
 
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState(() => {

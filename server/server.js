@@ -48,11 +48,18 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`\n=================================================`);
-  console.log(`  TIMEORA Horlogerie Backend Server Running      `);
-  console.log(`  Mode: ${process.env.NODE_ENV || 'development'} `);
-  console.log(`  Port: ${PORT}                                  `);
-  console.log(`  URL:  http://localhost:${PORT}/api/status     `);
-  console.log(`=================================================\n`);
-});
+// Start listening only when running directly (not in Vercel serverless)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n=================================================`);
+    console.log(`  TIMEORA Horlogerie Backend Server Running      `);
+    console.log(`  Mode: ${process.env.NODE_ENV || 'development'} `);
+    console.log(`  Port: ${PORT}                                  `);
+    console.log(`  URL:  http://localhost:${PORT}/api/status     `);
+    console.log(`=================================================\n`);
+  });
+}
+
+// Export app for Vercel serverless
+module.exports = app;
+

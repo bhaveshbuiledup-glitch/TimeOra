@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 import { 
   Plus, 
   Edit3, 
@@ -137,7 +139,7 @@ const Admin = () => {
       const uploadData = new FormData();
       filesToProcess.forEach(f => uploadData.append('images', f));
 
-      const res = await axios.post('http://localhost:5000/api/upload/multiple', uploadData, {
+      const res = await axios.post(`${API_BASE}/api/upload/multiple`, uploadData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
@@ -193,7 +195,7 @@ const Admin = () => {
     try {
       const uploadData = new FormData();
       uploadData.append('image', file);
-      const res = await axios.post('http://localhost:5000/api/upload', uploadData, {
+      const res = await axios.post(`${API_BASE}/api/upload`, uploadData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       if (res.data?.success && res.data?.url) {
@@ -281,7 +283,7 @@ const Admin = () => {
     try {
       const uploadData = new FormData();
       uploadData.append('video', file);
-      const res = await axios.post('http://localhost:5000/api/upload/video', uploadData, {
+      const res = await axios.post(`${API_BASE}/api/upload/video`, uploadData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       if (res.data?.success && res.data?.url) {

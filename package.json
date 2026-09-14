@@ -18,5 +18,8 @@
     "mongodb"
   ],
   "author": "TIMEORA Horlogerie",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
 }
