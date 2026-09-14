@@ -1,0 +1,22 @@
+{
+  "name": "watch-store",
+  "version": "1.0.0",
+  "description": "TIMEORA - Luxury Handcrafted Watch E-Commerce Platform",
+  "scripts": {
+    "client": "npm run dev --prefix client",
+    "server": "node server/server.js",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm run build --prefix client"
+  },
+  "keywords": [
+    "ecommerce",
+    "luxury",
+    "watches",
+    "react",
+    "express",
+    "tailwind",
+    "mongodb"
+  ],
+  "author": "TIMEORA Horlogerie",
+  "license": "ISC"
+}
