@@ -19,10 +19,11 @@ app.use(cors({
   credentials: true
 }));
 
-// Body parser
-app.use(express.json());
+// Body parser with 25MB limit to support high-res Base64 image payloads
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ limit: '25mb', extended: true }));
 
-// Static uploads folder
+// Static uploads folder (legacy support)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Health check endpoint
@@ -39,6 +40,7 @@ app.get('/api/status', (req, res) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
+app.use('/api/upload', require('./routes/uploadRoutes'));
 
 // Error Middlewares
 app.use(notFound);

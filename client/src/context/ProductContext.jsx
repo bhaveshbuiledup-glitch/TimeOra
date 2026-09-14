@@ -81,6 +81,7 @@ export const ProductProvider = ({ children }) => {
       images: Array.isArray(productData.images) && productData.images.length > 0
         ? productData.images
         : [productData.image || 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200'],
+      video: productData.video || '',
       colors: productData.colors && productData.colors.length > 0 
         ? productData.colors 
         : ['Obsidian Black', 'Champagne Gold'],

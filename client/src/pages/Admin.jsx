@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import axios from 'axios';
 import { 
   Plus, 
   Edit3, 
@@ -18,6 +19,11 @@ import {
   Sparkles,
   Percent,
   Sliders,
+  Upload,
+  RefreshCw,
+  Video,
+  Film,
+  Star,
   Image as ImageIcon
 } from 'lucide-react';
 import { useProducts } from '../context/ProductContext';
@@ -73,9 +79,237 @@ const Admin = () => {
     stock: 10,
     category: 'Chronograph',
     gender: 'Men',
-    image: PRESET_WATCH_IMAGES[0],
+    images: [],
+    video: '',
     tagline: ''
   });
+
+  // Media Upload Refs & States
+  const imagesInputRef = useRef(null);
+  const replaceImageInputRef = useRef(null);
+  const videoInputRef = useRef(null);
+  const [replacingIndex, setReplacingIndex] = useState(null);
+
+  const [uploadingMedia, setUploadingMedia] = useState(false);
+  const [mediaError, setMediaError] = useState('');
+  const [dragImagesActive, setDragImagesActive] = useState(false);
+  const [dragVideoActive, setDragVideoActive] = useState(false);
+  const [showUrlOption, setShowUrlOption] = useState(false);
+  const [manualUrlInput, setManualUrlInput] = useState('');
+
+  // Handle uploading multiple image files (up to 6 max)
+  const handleImagesSelect = async (filesList) => {
+    if (!filesList || filesList.length === 0) return;
+
+    const currentCount = formData.images ? formData.images.length : 0;
+    if (currentCount >= 6) {
+      setMediaError('Maximum limit of 6 product images reached. Remove an image to add another.');
+      return;
+    }
+
+    const availableSlots = 6 - currentCount;
+    const filesToProcess = Array.from(filesList).slice(0, availableSlots);
+
+    const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const invalidFile = filesToProcess.find(file => {
+      const ext = file.name.split('.').pop().toLowerCase();
+      return !allowedMimeTypes.includes(file.type.toLowerCase()) && !['jpg', 'jpeg', 'png', 'webp'].includes(ext);
+    });
+
+    if (invalidFile) {
+      setMediaError('Only JPG, JPEG, PNG, and WebP images are allowed.');
+      return;
+    }
+
+    const oversizedFile = filesToProcess.find(file => file.size > 10 * 1024 * 1024);
+    if (oversizedFile) {
+      setMediaError('One or more images exceed the 10MB file size limit.');
+      return;
+    }
+
+    setMediaError('');
+    setUploadingMedia(true);
+
+    const newUrls = [];
+
+    // Try backend upload route first
+    try {
+      const uploadData = new FormData();
+      filesToProcess.forEach(f => uploadData.append('images', f));
+
+      const res = await axios.post('http://localhost:5000/api/upload/multiple', uploadData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      if (res.data?.success && Array.isArray(res.data.urls)) {
+        newUrls.push(...res.data.urls);
+      }
+    } catch (err) {
+      console.warn('Backend multi-upload server endpoint unreachable, using client FileReader fallback:', err.message);
+    }
+
+    // Fallback: Read remaining files with FileReader
+    if (newUrls.length < filesToProcess.length) {
+      const readPromises = filesToProcess.slice(newUrls.length).map(file => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(file);
+        });
+      });
+
+      const readResults = await Promise.all(readPromises);
+      readResults.filter(Boolean).forEach(url => newUrls.push(url));
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      images: [...(prev.images || []), ...newUrls].slice(0, 6)
+    }));
+    setUploadingMedia(false);
+  };
+
+  // Replace a specific image at index
+  const handleReplaceImageFile = async (index, file) => {
+    if (!file) return;
+
+    const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!allowedMimeTypes.includes(file.type.toLowerCase()) && !['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
+      setMediaError('Only JPG, JPEG, PNG, and WebP images are allowed.');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setMediaError('File size exceeds the 10MB limit.');
+      return;
+    }
+
+    setMediaError('');
+    setUploadingMedia(true);
+
+    let newUrl = null;
+    try {
+      const uploadData = new FormData();
+      uploadData.append('image', file);
+      const res = await axios.post('http://localhost:5000/api/upload', uploadData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      if (res.data?.success && res.data?.url) {
+        newUrl = res.data.url;
+      }
+    } catch (e) {
+      // Fallback
+    }
+
+    if (!newUrl) {
+      newUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    if (newUrl) {
+      setFormData(prev => {
+        const updated = [...(prev.images || [])];
+        updated[index] = newUrl;
+        return { ...prev, images: updated };
+      });
+    }
+
+    setUploadingMedia(false);
+    setReplacingIndex(null);
+  };
+
+  // Remove a specific image at index
+  const handleRemoveImage = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
+  };
+
+  // Make an image the primary image (move to index 0)
+  const handleSetPrimaryImage = (index) => {
+    if (index === 0) return;
+    setFormData(prev => {
+      const list = [...prev.images];
+      const target = list.splice(index, 1)[0];
+      return { ...prev, images: [target, ...list] };
+    });
+  };
+
+  // Add image from manual URL
+  const handleAddManualUrlImage = () => {
+    if (!manualUrlInput || !manualUrlInput.trim()) return;
+    if (formData.images && formData.images.length >= 6) {
+      setMediaError('Maximum limit of 6 product images reached.');
+      return;
+    }
+    setFormData(prev => ({
+      ...prev,
+      images: [...(prev.images || []), manualUrlInput.trim()].slice(0, 6)
+    }));
+    setManualUrlInput('');
+  };
+
+  // Handle Video Select
+  const handleVideoSelect = async (file) => {
+    if (!file) return;
+
+    const allowedVideoMimeTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
+    const ext = file.name.split('.').pop().toLowerCase();
+    const isAllowedExt = ['mp4', 'webm', 'mov', 'ogg'].includes(ext);
+
+    if (!allowedVideoMimeTypes.includes(file.type.toLowerCase()) && !isAllowedExt) {
+      setMediaError('Only MP4 and WebM video formats are supported.');
+      return;
+    }
+
+    if (file.size > 50 * 1024 * 1024) {
+      setMediaError('Video file size exceeds the 50MB limit.');
+      return;
+    }
+
+    setMediaError('');
+    setUploadingMedia(true);
+
+    let videoUrl = null;
+    try {
+      const uploadData = new FormData();
+      uploadData.append('video', file);
+      const res = await axios.post('http://localhost:5000/api/upload/video', uploadData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      if (res.data?.success && res.data?.url) {
+        videoUrl = res.data.url;
+      }
+    } catch (e) {
+      console.warn('Backend video endpoint unreachable, using client FileReader fallback:', err.message);
+    }
+
+    if (!videoUrl) {
+      videoUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    if (videoUrl) {
+      setFormData(prev => ({ ...prev, video: videoUrl }));
+    }
+
+    setUploadingMedia(false);
+  };
+
+  const handleRemoveVideo = () => {
+    setFormData(prev => ({ ...prev, video: '' }));
+  };
 
   // Offer Modal State
   const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
@@ -102,6 +336,10 @@ const Admin = () => {
   const handleOpenCreateModal = () => {
     setModalMode('create');
     setEditingProductId(null);
+    setMediaError('');
+    setUploadingMedia(false);
+    setShowUrlOption(false);
+    setManualUrlInput('');
     setFormData({
       name: '',
       price: '',
@@ -110,7 +348,8 @@ const Admin = () => {
       stock: 10,
       category: 'Chronograph',
       gender: 'Men',
-      image: PRESET_WATCH_IMAGES[Math.floor(Math.random() * PRESET_WATCH_IMAGES.length)],
+      images: [],
+      video: '',
       tagline: 'Handcrafted Haute Horlogerie'
     });
     setIsProductModalOpen(true);
@@ -120,6 +359,15 @@ const Admin = () => {
   const handleOpenEditModal = (product) => {
     setModalMode('edit');
     setEditingProductId(product.id);
+    setMediaError('');
+    setUploadingMedia(false);
+    setShowUrlOption(false);
+    setManualUrlInput('');
+
+    const existingImages = Array.isArray(product.images) && product.images.length > 0
+      ? product.images
+      : (product.image ? [product.image] : [PRESET_WATCH_IMAGES[0]]);
+
     setFormData({
       name: product.name,
       price: product.price,
@@ -128,7 +376,8 @@ const Admin = () => {
       stock: product.stock,
       category: product.category || 'Chronograph',
       gender: product.gender || 'Men',
-      image: product.images?.[0] || product.image || PRESET_WATCH_IMAGES[0],
+      images: existingImages,
+      video: product.video || '',
       tagline: product.tagline || ''
     });
     setIsProductModalOpen(true);
@@ -138,6 +387,11 @@ const Admin = () => {
   const handleSubmitProduct = (e) => {
     e.preventDefault();
     if (!formData.name || !formData.price || !formData.description) return;
+    
+    if (!formData.images || formData.images.length === 0) {
+      setMediaError('Please upload at least 1 product image.');
+      return;
+    }
 
     const payload = {
       name: formData.name.trim(),
@@ -147,8 +401,9 @@ const Admin = () => {
       stock: Number(formData.stock) >= 0 ? Number(formData.stock) : 0,
       category: formData.category,
       gender: formData.gender,
-      images: [formData.image],
-      image: formData.image,
+      images: formData.images,
+      image: formData.images[0], // primary image
+      video: formData.video || '',
       tagline: formData.tagline || 'Engineered with Precision'
     };
 
@@ -753,46 +1008,311 @@ const Admin = () => {
                 </div>
               </div>
 
-              {/* Product Image URL */}
-              <div>
-                <label className="block text-gray-300 uppercase tracking-wider mb-1.5 font-semibold">
-                  Product Image URL *
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="url"
-                    required
-                    value={formData.image}
-                    onChange={(e) => setFormData({...formData, image: e.target.value})}
-                    placeholder="https://images.unsplash.com/..."
-                    className="flex-1 bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#c5a880]"
-                  />
-                  {formData.image && (
-                    <img
-                      src={formData.image}
-                      alt="preview"
-                      className="w-10 h-10 object-cover rounded-lg border border-[#2c2c3e] bg-black"
-                    />
-                  )}
+              {/* Media Section: Images (Up to 6) & Video Showcase */}
+              <div className="space-y-5 pt-3 border-t border-[#222232]">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider font-['Cinzel'] flex items-center space-x-2">
+                      <ImageIcon size={16} className="text-[#c5a880]" />
+                      <span>Product Media Showcase</span>
+                    </h3>
+                    <p className="text-[11px] text-gray-400 mt-0.5">
+                      Upload up to 6 product images and 1 optional product video.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowUrlOption(!showUrlOption)}
+                    className="text-[11px] text-[#c5a880] hover:underline flex items-center space-x-1"
+                  >
+                    <span>{showUrlOption ? "Hide URL Options" : "Add Image URL / Presets"}</span>
+                  </button>
                 </div>
 
-                {/* Preset Image Suggestions */}
-                <div className="mt-2">
-                  <span className="text-[10px] text-gray-500 block mb-1">Select from high-res horology presets:</span>
-                  <div className="flex gap-2 overflow-x-auto pb-1">
-                    {PRESET_WATCH_IMAGES.map((url, idx) => (
-                      <button
-                        type="button"
-                        key={idx}
-                        onClick={() => setFormData({...formData, image: url})}
-                        className={`w-10 h-10 rounded-lg overflow-hidden border flex-shrink-0 transition-all ${
-                          formData.image === url ? 'border-[#c5a880] ring-2 ring-[#c5a880]' : 'border-white/10 opacity-60'
+                {/* Hidden Inputs */}
+                <input
+                  ref={imagesInputRef}
+                  type="file"
+                  multiple
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  onChange={(e) => {
+                    if (e.target.files) handleImagesSelect(e.target.files);
+                    e.target.value = '';
+                  }}
+                  className="hidden"
+                />
+
+                <input
+                  ref={replaceImageInputRef}
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0] && replacingIndex !== null) {
+                      handleReplaceImageFile(replacingIndex, e.target.files[0]);
+                    }
+                    e.target.value = '';
+                  }}
+                  className="hidden"
+                />
+
+                <input
+                  ref={videoInputRef}
+                  type="file"
+                  accept="video/mp4,video/webm,video/ogg,video/quicktime"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      handleVideoSelect(e.target.files[0]);
+                    }
+                    e.target.value = '';
+                  }}
+                  className="hidden"
+                />
+
+                {/* Error Banner */}
+                {mediaError && (
+                  <div className="p-3 bg-red-950/60 border border-red-800/80 rounded-xl text-red-300 text-xs flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <AlertCircle size={16} className="text-red-400 flex-shrink-0" />
+                      <span>{mediaError}</span>
+                    </div>
+                    <button type="button" onClick={() => setMediaError('')} className="text-red-400 hover:text-white">
+                      <X size={14} />
+                    </button>
+                  </div>
+                )}
+
+                {/* 1. PRODUCT IMAGES GRID (Max 6) */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-gray-300 uppercase tracking-wider text-xs font-semibold">
+                      Product Images ({formData.images?.length || 0}/6) *
+                    </label>
+                    <span className="text-[10px] text-amber-400 font-medium">
+                      ★ 1st image is Main/Primary image
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {formData.images?.map((imgUrl, idx) => (
+                      <div 
+                        key={idx} 
+                        className="relative aspect-square bg-[#161622] border border-[#2c2c3e] rounded-xl overflow-hidden group shadow-md"
+                      >
+                        <img
+                          src={imgUrl}
+                          alt={`Product thumbnail ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+
+                        {/* Primary Badge for index 0 */}
+                        {idx === 0 ? (
+                          <div className="absolute top-2 left-2 bg-[#c5a880] text-black text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded shadow z-10 flex items-center space-x-1">
+                            <Star size={10} fill="currentColor" />
+                            <span>Primary</span>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleSetPrimaryImage(idx)}
+                            className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 hover:bg-[#c5a880] text-white hover:text-black text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded backdrop-blur border border-white/10 z-10"
+                            title="Set as Main Primary Image"
+                          >
+                            Make Primary
+                          </button>
+                        )}
+
+                        {/* Action Overlay Controls */}
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2 p-2 backdrop-blur-[1px]">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setReplacingIndex(idx);
+                              replaceImageInputRef.current?.click();
+                            }}
+                            className="p-2 bg-[#252536] hover:bg-[#34344c] text-white rounded-lg transition-colors border border-[#3e3e56]"
+                            title="Replace this image"
+                          >
+                            <Upload size={14} className="text-[#c5a880]" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(idx)}
+                            className="p-2 bg-red-950/80 hover:bg-red-900 text-red-300 rounded-lg transition-colors border border-red-800/60"
+                            title="Remove image"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Add Image Dropzone Card if under 6 images limit */}
+                    {(!formData.images || formData.images.length < 6) && (
+                      <div
+                        onDragEnter={(e) => { e.preventDefault(); setDragImagesActive(true); }}
+                        onDragLeave={(e) => { e.preventDefault(); setDragImagesActive(false); }}
+                        onDragOver={(e) => { e.preventDefault(); setDragImagesActive(true); }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          setDragImagesActive(false);
+                          if (e.dataTransfer.files) handleImagesSelect(e.dataTransfer.files);
+                        }}
+                        onClick={() => imagesInputRef.current?.click()}
+                        className={`aspect-square border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
+                          dragImagesActive 
+                            ? 'border-[#c5a880] bg-[#c5a880]/10' 
+                            : 'border-[#2c2c3e] hover:border-[#c5a880]/60 bg-[#14141d]'
                         }`}
                       >
-                        <img src={url} alt="preset" className="w-full h-full object-cover" />
-                      </button>
-                    ))}
+                        {uploadingMedia ? (
+                          <div className="flex flex-col items-center space-y-1">
+                            <RefreshCw size={20} className="text-[#c5a880] animate-spin" />
+                            <span className="text-[10px] text-gray-300">Processing...</span>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center space-y-1.5">
+                            <div className="w-8 h-8 rounded-full bg-[#1f1f2e] flex items-center justify-center text-[#c5a880]">
+                              <Plus size={18} />
+                            </div>
+                            <div>
+                              <span className="text-xs font-bold text-[#c5a880] block">Add Image</span>
+                              <span className="text-[9px] text-gray-400 block mt-0.5">JPG, PNG, WebP</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
+                </div>
+
+                {/* Optional URL Input & Preset Selector */}
+                {showUrlOption && (
+                  <div className="p-4 bg-[#161622] border border-[#262638] rounded-xl space-y-3">
+                    <div>
+                      <label className="block text-gray-300 text-[11px] mb-1 font-semibold">
+                        Add Image via Direct URL:
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="url"
+                          value={manualUrlInput}
+                          onChange={(e) => setManualUrlInput(e.target.value)}
+                          placeholder="https://images.unsplash.com/..."
+                          className="flex-1 bg-[#181824] border border-[#2c2c3e] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#c5a880]"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddManualUrlImage}
+                          className="px-3 py-1.5 bg-[#c5a880] text-black text-xs font-bold rounded-lg hover:bg-[#d8be98]"
+                        >
+                          Add
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] text-gray-400 block mb-1">Or click preset image to add:</span>
+                      <div className="flex gap-2 overflow-x-auto pb-1">
+                        {PRESET_WATCH_IMAGES.map((url, idx) => (
+                          <button
+                            type="button"
+                            key={idx}
+                            onClick={() => {
+                              if (formData.images && formData.images.length >= 6) {
+                                setMediaError('Maximum limit of 6 product images reached.');
+                                return;
+                              }
+                              setFormData(prev => ({
+                                ...prev,
+                                images: [...(prev.images || []), url].slice(0, 6)
+                              }));
+                            }}
+                            className="w-9 h-9 rounded-lg overflow-hidden border border-white/10 opacity-70 hover:opacity-100 flex-shrink-0 transition-all hover:border-[#c5a880]"
+                          >
+                            <img src={url} alt="preset" className="w-full h-full object-cover" />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. PRODUCT VIDEO (Optional, Max 1) */}
+                <div className="pt-3 border-t border-[#222232]">
+                  <label className="block text-gray-300 uppercase tracking-wider text-xs font-semibold mb-2 flex items-center space-x-1.5">
+                    <Video size={14} className="text-[#c5a880]" />
+                    <span>Product Video (Optional - Max 1)</span>
+                  </label>
+
+                  {formData.video ? (
+                    /* Video Preview Card */
+                    <div className="bg-[#161622] border border-[#2c2c3e] rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                      <div className="w-full sm:w-44 aspect-video rounded-lg overflow-hidden bg-black border border-[#343448] flex-shrink-0 relative">
+                        <video
+                          src={formData.video}
+                          controls
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex flex-col flex-1">
+                        <span className="text-xs font-semibold text-white flex items-center space-x-1.5">
+                          <Film size={14} className="text-[#c5a880]" />
+                          <span>Showcase Video Ready</span>
+                        </span>
+                        <span className="text-[10px] text-gray-400 max-w-[200px] truncate mt-1">
+                          {formData.video.startsWith('data:') ? 'Base64 Video Data Stream' : formData.video}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          type="button"
+                          onClick={() => videoInputRef.current?.click()}
+                          className="px-3 py-2 bg-[#252536] hover:bg-[#34344a] text-white rounded-lg text-xs font-medium flex items-center space-x-1 transition-colors border border-[#36364e]"
+                        >
+                          <Upload size={14} className="text-[#c5a880]" />
+                          <span>Replace</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleRemoveVideo}
+                          className="px-3 py-2 bg-red-950/40 hover:bg-red-900 text-red-300 rounded-lg text-xs font-medium flex items-center space-x-1 transition-colors border border-red-900/50"
+                        >
+                          <Trash2 size={14} />
+                          <span>Remove</span>
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Video Dropzone */
+                    <div
+                      onDragEnter={(e) => { e.preventDefault(); setDragVideoActive(true); }}
+                      onDragLeave={(e) => { e.preventDefault(); setDragVideoActive(false); }}
+                      onDragOver={(e) => { e.preventDefault(); setDragVideoActive(true); }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setDragVideoActive(false);
+                        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                          handleVideoSelect(e.dataTransfer.files[0]);
+                        }
+                      }}
+                      onClick={() => videoInputRef.current?.click()}
+                      className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
+                        dragVideoActive 
+                          ? 'border-[#c5a880] bg-[#c5a880]/10' 
+                          : 'border-[#2c2c3e] hover:border-[#c5a880]/50 bg-[#14141d]'
+                      }`}
+                    >
+                      <div className="flex flex-col items-center justify-center space-y-1.5">
+                        <div className="w-9 h-9 rounded-full bg-[#1e1e2c] border border-[#323246] flex items-center justify-center text-[#c5a880]">
+                          <Video size={18} />
+                        </div>
+                        <div>
+                          <span className="text-xs font-bold text-gray-200 block">Upload Product Video</span>
+                          <span className="text-[10px] text-gray-400 block mt-0.5">MP4 or WebM format (Max 50MB)</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

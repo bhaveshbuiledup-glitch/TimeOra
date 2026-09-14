@@ -13,7 +13,10 @@ import {
   Check, 
   ChevronRight, 
   MessageSquare,
-  Share2
+  Share2,
+  Play,
+  Film,
+  Video
 } from 'lucide-react';
 import { WATCH_PRODUCTS } from '../data/watches';
 import { BRAND_CONFIG } from '../config/brandConfig';
@@ -34,7 +37,7 @@ const ProductDetails = () => {
   const isOutOfStock = (product?.stock <= 0 || product?.status === 'out-of-stock');
   const isOnOffer = Boolean(product?.onOffer || (product?.discountPrice && product.discountPrice < product.price) || product?.offerPercent);
 
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [activeMedia, setActiveMedia] = useState({ type: 'image', index: 0 });
   const [selectedColor, setSelectedColor] = useState(product?.colors?.[0] || 'Standard');
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -46,7 +49,7 @@ const ProductDetails = () => {
   // Scroll to top on product change
   useEffect(() => {
     window.scrollTo(0, 0);
-    setActiveImageIndex(0);
+    setActiveMedia({ type: 'image', index: 0 });
     if (product?.colors?.length) setSelectedColor(product.colors[0]);
   }, [id, product]);
 
@@ -68,9 +71,11 @@ const ProductDetails = () => {
   // Related watches from same category or gender
   const relatedWatches = products.filter(p => p.id !== product?.id && (p.category === product?.category || p.gender === product?.gender)).slice(0, 4);
 
-  const images = product.images || [
-    'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200'
-  ];
+  const images = (Array.isArray(product.images) && product.images.length > 0)
+    ? product.images
+    : [product.image || 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200'];
+
+  const hasVideo = Boolean(product.video);
 
   return (
     <div className="min-h-screen bg-[#0b0b0d] pt-28 pb-24 text-gray-100">
@@ -88,37 +93,76 @@ const ProductDetails = () => {
         {/* Main Product Showcase Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
           
-          {/* Left: Interactive Image Gallery */}
+          {/* Left: Interactive Media Gallery (Images + Video) */}
           <div className="space-y-4">
-            {/* Primary Large Image Frame */}
-            <div className="relative aspect-[4/5] bg-[#121218] border border-[#22222e] rounded-2xl overflow-hidden flex items-center justify-center p-8 group shadow-2xl">
+            {/* Primary Frame (Image or Video) */}
+            <div className="relative aspect-[4/5] bg-[#121218] border border-[#22222e] rounded-2xl overflow-hidden flex items-center justify-center p-4 group shadow-2xl">
               {product.discountPrice && (
                 <div className="absolute top-4 left-4 z-10 bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded">
                   Special Atelier Pricing
                 </div>
               )}
-              <img
-                src={images[activeImageIndex]}
-                alt={product.name}
-                className="w-full h-full object-contain filter drop-shadow-[0_25px_35px_rgba(0,0,0,0.9)] transition-all duration-500 transform group-hover:scale-105"
-              />
+
+              {activeMedia.type === 'video' && hasVideo ? (
+                <div className="w-full h-full flex items-center justify-center bg-black rounded-xl overflow-hidden">
+                  <video
+                    src={product.video}
+                    controls
+                    autoPlay
+                    loop
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              ) : (
+                <img
+                  src={images[activeMedia.index] || images[0]}
+                  alt={product.name}
+                  className="w-full h-full object-contain filter drop-shadow-[0_25px_35px_rgba(0,0,0,0.9)] transition-all duration-500 transform group-hover:scale-105"
+                />
+              )}
             </div>
 
-            {/* Thumbnail Row */}
-            <div className="flex gap-4 overflow-x-auto pb-2">
+            {/* Media Thumbnails Row (Images 1-6 + Video Thumbnail) */}
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
               {images.map((img, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setActiveImageIndex(idx)}
-                  className={`w-20 h-20 rounded-xl overflow-hidden bg-[#161620] border-2 flex-shrink-0 transition-all ${
-                    activeImageIndex === idx
-                      ? 'border-[#c5a880] shadow-lg shadow-[#c5a880]/20'
+                  onClick={() => setActiveMedia({ type: 'image', index: idx })}
+                  className={`w-20 h-20 rounded-xl overflow-hidden bg-[#161620] border-2 flex-shrink-0 transition-all relative ${
+                    activeMedia.type === 'image' && activeMedia.index === idx
+                      ? 'border-[#c5a880] shadow-lg shadow-[#c5a880]/20 scale-105'
                       : 'border-[#262634] opacity-60 hover:opacity-100'
                   }`}
+                  title={idx === 0 ? "Primary Product Image" : `View Image ${idx + 1}`}
                 >
-                  <img src={img} alt="thumbnail" className="w-full h-full object-cover" />
+                  <img src={img} alt={`thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                  {idx === 0 && (
+                    <span className="absolute bottom-1 left-1 right-1 bg-black/80 text-[#c5a880] text-[8px] font-bold uppercase text-center rounded py-0.5 border border-[#c5a880]/30">
+                      Main
+                    </span>
+                  )}
                 </button>
               ))}
+
+              {/* Video Thumbnail Button if Video Present */}
+              {hasVideo && (
+                <button
+                  onClick={() => setActiveMedia({ type: 'video' })}
+                  className={`w-20 h-20 rounded-xl overflow-hidden bg-[#181826] border-2 flex-shrink-0 transition-all relative flex flex-col items-center justify-center group ${
+                    activeMedia.type === 'video'
+                      ? 'border-[#c5a880] shadow-lg shadow-[#c5a880]/30 scale-105 bg-[#202034]'
+                      : 'border-[#2e2e42] opacity-75 hover:opacity-100'
+                  }`}
+                  title="Watch Product Video Showcase"
+                >
+                  <div className="w-9 h-9 rounded-full bg-[#c5a880] text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <Play size={16} fill="currentColor" className="ml-0.5" />
+                  </div>
+                  <span className="text-[9px] font-bold text-white uppercase tracking-wider mt-1">
+                    Video
+                  </span>
+                </button>
+              )}
             </div>
           </div>
 

@@ -114,6 +114,7 @@ const createProduct = async (req, res) => {
       images: Array.isArray(req.body.images) && req.body.images.length > 0
         ? req.body.images
         : [req.body.image || 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200'],
+      video: req.body.video || '',
       category: req.body.category || 'Chronograph',
       gender: req.body.gender || 'Unisex',
       rating: 5.0,
