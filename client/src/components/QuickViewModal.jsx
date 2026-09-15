@@ -55,7 +55,7 @@ const QuickViewModal = ({ product, onClose }) => {
           <div className="p-6 sm:p-8 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between text-xs text-gray-400 uppercase tracking-widest mb-2">
-                <span className="text-[#c5a880] font-semibold">{product.category}</span>
+                <span className="text-[#2dd4bf] font-semibold">{product.category}</span>
                 <span>SKU: {product.sku}</span>
               </div>
 
@@ -99,17 +99,17 @@ const QuickViewModal = ({ product, onClose }) => {
               {/* Specs Icons */}
               <div className="grid grid-cols-3 gap-2 py-3 border-y border-[#22222d] mb-6 text-center text-[11px] text-gray-300">
                 <div className="flex flex-col items-center justify-center p-2 rounded bg-[#171720]">
-                  <Gauge size={16} className="text-[#c5a880] mb-1" />
+                  <Gauge size={16} className="text-[#2dd4bf] mb-1" />
                   <span className="font-semibold text-gray-200">Movement</span>
                   <span className="text-[10px] text-gray-400 truncate max-w-full">{product.movement?.split(' ')[0]}</span>
                 </div>
                 <div className="flex flex-col items-center justify-center p-2 rounded bg-[#171720]">
-                  <Droplets size={16} className="text-[#c5a880] mb-1" />
+                  <Droplets size={16} className="text-[#2dd4bf] mb-1" />
                   <span className="font-semibold text-gray-200">Water Res.</span>
                   <span className="text-[10px] text-gray-400">{product.waterResistance?.split(' ')[0]}</span>
                 </div>
                 <div className="flex flex-col items-center justify-center p-2 rounded bg-[#171720]">
-                  <Shield size={16} className="text-[#c5a880] mb-1" />
+                  <Shield size={16} className="text-[#2dd4bf] mb-1" />
                   <span className="font-semibold text-gray-200">Warranty</span>
                   <span className="text-[10px] text-gray-400">5-Year Global</span>
                 </div>
@@ -119,7 +119,7 @@ const QuickViewModal = ({ product, onClose }) => {
               {product.colors && (
                 <div className="mb-6">
                   <label className="block text-xs uppercase tracking-wider text-gray-300 mb-2">
-                    Edition / Finish: <span className="text-[#c5a880]">{selectedColor}</span>
+                    Edition / Finish: <span className="text-[#2dd4bf]">{selectedColor}</span>
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {product.colors.map(color => (
@@ -128,7 +128,7 @@ const QuickViewModal = ({ product, onClose }) => {
                         onClick={() => setSelectedColor(color)}
                         className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                           selectedColor === color
-                            ? 'bg-[#c5a880] text-black border-[#c5a880] font-medium shadow-md'
+                            ? 'bg-[#2dd4bf] text-black border-[#2dd4bf] font-medium shadow-md'
                             : 'bg-[#181820] text-gray-300 border-[#2a2a35] hover:border-gray-500'
                         }`}
                       >
@@ -170,7 +170,7 @@ const QuickViewModal = ({ product, onClose }) => {
                       ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700/60'
                       : added
                       ? 'bg-emerald-600 text-white'
-                      : 'bg-[#c5a880] hover:bg-[#d8be98] text-black shadow-lg shadow-[#c5a880]/20'
+                      : 'bg-[#2dd4bf] hover:bg-[#5eead4] text-black shadow-lg shadow-[#2dd4bf]/20'
                   }`}
                 >
                   {product.stock <= 0 || product.status === 'out-of-stock' ? (
@@ -192,7 +192,7 @@ const QuickViewModal = ({ product, onClose }) => {
               <Link
                 to={`/product/${product.id}`}
                 onClick={onClose}
-                className="block text-center text-xs text-gray-400 hover:text-[#c5a880] uppercase tracking-wider py-1 transition-colors"
+                className="block text-center text-xs text-gray-400 hover:text-[#2dd4bf] uppercase tracking-wider py-1 transition-colors"
               >
                 View Full Horological Specifications →
               </Link>

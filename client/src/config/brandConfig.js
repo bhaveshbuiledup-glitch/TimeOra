@@ -16,12 +16,12 @@ export const BRAND_CONFIG = {
     hours: "Mon - Fri: 9:00 AM - 8:00 PM EST"
   },
   colors: {
-    goldPrimary: "#c5a880",
-    goldLight: "#e6d5be",
-    goldDark: "#9a7b4f",
+    goldPrimary: "#2dd4bf",
+    goldLight: "#5eead4",
+    goldDark: "#14b8a6",
     darkBg: "#0b0b0d",
-    surfaceBg: "#141418",
-    cardBg: "#18181f"
+    surfaceBg: "#0f1715",
+    cardBg: "#141f1c"
   },
   socials: {
     instagram: "https://instagram.com",

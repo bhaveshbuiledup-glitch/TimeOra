@@ -4,48 +4,25 @@ const WishlistContext = createContext();
 
 export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState(() => {
-    try {
-      const saved = localStorage.getItem('timeora_wishlist');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
+    try { return JSON.parse(localStorage.getItem('timeora_wishlist')) || []; } catch { return []; }
   });
 
   useEffect(() => {
-    try {
-      localStorage.setItem('timeora_wishlist', JSON.stringify(wishlist));
-    } catch (e) {
-      console.error("Failed to save wishlist", e);
-    }
+    try { localStorage.setItem('timeora_wishlist', JSON.stringify(wishlist)); } catch (e) { console.error(e); }
   }, [wishlist]);
 
   const toggleWishlist = (product) => {
     setWishlist(prev => {
       const exists = prev.some(item => item.id === product.id);
-      if (exists) {
-        return prev.filter(item => item.id !== product.id);
-      } else {
-        return [...prev, product];
-      }
+      return exists ? prev.filter(item => item.id !== product.id) : [...prev, product];
     });
   };
 
-  const isInWishlist = (productId) => {
-    return wishlist.some(item => item.id === productId);
-  };
-
-  const removeFromWishlist = (productId) => {
-    setWishlist(prev => prev.filter(item => item.id !== productId));
-  };
+  const isInWishlist = (id) => wishlist.some(item => item.id === id);
+  const removeFromWishlist = (id) => setWishlist(prev => prev.filter(item => item.id !== id));
 
   return (
-    <WishlistContext.Provider value={{
-      wishlist,
-      toggleWishlist,
-      isInWishlist,
-      removeFromWishlist
-    }}>
+    <WishlistContext.Provider value={{ wishlist, toggleWishlist, isInWishlist, removeFromWishlist }}>
       {children}
     </WishlistContext.Provider>
   );

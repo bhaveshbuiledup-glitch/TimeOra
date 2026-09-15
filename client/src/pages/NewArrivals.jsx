@@ -14,7 +14,7 @@ const NewArrivals = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-[#1c1c28] border border-[#c5a880]/40 text-[#c5a880] text-xs uppercase tracking-[0.2em] mb-4">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-[#1c1c28] border border-[#2dd4bf]/40 text-[#2dd4bf] text-xs uppercase tracking-[0.2em] mb-4">
             <Sparkles size={14} />
             <span>Latest Atelier Creations</span>
           </div>

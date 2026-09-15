@@ -74,7 +74,7 @@ const AllWatches = ({
         
         {/* Header Title Section */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-xs font-semibold text-[#c5a880] uppercase tracking-[0.3em] block mb-2">
+          <span className="text-xs font-semibold text-[#2dd4bf] uppercase tracking-[0.3em] block mb-2">
             The TIMEORA Collection
           </span>
           <h1 className="text-3xl sm:text-5xl font-['Cinzel'] font-bold text-white mb-4">
@@ -96,7 +96,7 @@ const AllWatches = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search model, calibre, SKU..."
-              className="w-full bg-[#181820] border border-[#2c2c38] rounded-lg pl-10 pr-8 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#c5a880]"
+              className="w-full bg-[#181820] border border-[#2c2c38] rounded-lg pl-10 pr-8 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#2dd4bf]"
             />
             {searchQuery && (
               <button 
@@ -114,19 +114,19 @@ const AllWatches = ({
               onClick={() => setShowFiltersMobile(!showFiltersMobile)}
               className="md:hidden flex items-center space-x-2 px-4 py-2 bg-[#1a1a24] border border-[#2e2e3e] rounded-lg text-xs font-semibold uppercase tracking-wider text-gray-200"
             >
-              <Filter size={15} className="text-[#c5a880]" />
+              <Filter size={15} className="text-[#2dd4bf]" />
               <span>Filters ({filteredProducts.length})</span>
             </button>
 
             {/* Sort Dropdown */}
             <div className="flex items-center space-x-2 w-full md:w-auto justify-end">
-              <ArrowUpDown size={15} className="text-[#c5a880] hidden sm:block" />
+              <ArrowUpDown size={15} className="text-[#2dd4bf] hidden sm:block" />
               <span className="text-xs uppercase tracking-wider text-gray-400 hidden sm:inline">Sort:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 aria-label="Sort timepieces"
-                className="bg-[#181820] border border-[#2c2c38] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#c5a880] cursor-pointer"
+                className="bg-[#181820] border border-[#2c2c38] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#2dd4bf] cursor-pointer"
               >
                 <option value="featured">Featured & Curated</option>
                 <option value="newest">Newest Releases</option>
@@ -153,7 +153,7 @@ const AllWatches = ({
               
               <div className="flex items-center justify-between pb-4 border-b border-[#22222d]">
                 <div className="flex items-center space-x-2">
-                  <SlidersHorizontal size={18} className="text-[#c5a880]" />
+                  <SlidersHorizontal size={18} className="text-[#2dd4bf]" />
                   <h3 className="font-['Cinzel'] uppercase tracking-widest text-sm font-bold text-white">
                     Refine Selection
                   </h3>
@@ -165,7 +165,7 @@ const AllWatches = ({
                 ) : (
                   <button 
                     onClick={resetFilters} 
-                    className="text-[11px] text-gray-400 hover:text-[#c5a880] flex items-center space-x-1"
+                    className="text-[11px] text-gray-400 hover:text-[#2dd4bf] flex items-center space-x-1"
                     title="Reset Filters"
                   >
                     <RotateCcw size={12} />
@@ -186,7 +186,7 @@ const AllWatches = ({
                       onClick={() => setSelectedGender(gender)}
                       className={`text-xs px-3.5 py-1.5 rounded-full border transition-all ${
                         selectedGender === gender
-                          ? 'bg-[#c5a880] text-black border-[#c5a880] font-semibold'
+                          ? 'bg-[#2dd4bf] text-black border-[#2dd4bf] font-semibold'
                           : 'bg-[#181822] text-gray-400 border-[#2a2a35] hover:border-gray-500'
                       }`}
                     >
@@ -208,13 +208,13 @@ const AllWatches = ({
                       onClick={() => setSelectedCategory(category)}
                       className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-colors flex items-center justify-between ${
                         selectedCategory === category
-                          ? 'bg-[#c5a880]/15 text-[#c5a880] font-semibold border border-[#c5a880]/30'
+                          ? 'bg-[#2dd4bf]/15 text-[#2dd4bf] font-semibold border border-[#2dd4bf]/30'
                           : 'text-gray-400 hover:bg-[#181822] hover:text-white'
                       }`}
                     >
                       <span>{category}</span>
                       {selectedCategory === category && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#c5a880]" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#2dd4bf]" />
                       )}
                     </button>
                   ))}
@@ -227,7 +227,7 @@ const AllWatches = ({
                   <label className="text-xs uppercase tracking-widest text-gray-300 font-semibold">
                     Maximum Price
                   </label>
-                  <span className="text-xs font-bold text-[#c5a880]">
+                  <span className="text-xs font-bold text-[#2dd4bf]">
                     {BRAND_CONFIG.currency}{maxPrice.toLocaleString()}
                   </span>
                 </div>
@@ -239,7 +239,7 @@ const AllWatches = ({
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(Number(e.target.value))}
                   aria-label="Filter by maximum price"
-                  className="w-full accent-[#c5a880] bg-[#22222d] h-1.5 rounded-lg appearance-none cursor-pointer"
+                  className="w-full accent-[#2dd4bf] bg-[#22222d] h-1.5 rounded-lg appearance-none cursor-pointer"
                 />
                 <div className="flex justify-between text-[10px] text-gray-500 mt-1">
                   <span>{BRAND_CONFIG.currency}700</span>
@@ -252,7 +252,7 @@ const AllWatches = ({
                 <span>Showing {filteredProducts.length} watches</span>
                 <button 
                   onClick={resetFilters} 
-                  className="text-[#c5a880] hover:underline"
+                  className="text-[#2dd4bf] hover:underline"
                 >
                   Clear All
                 </button>
@@ -263,7 +263,7 @@ const AllWatches = ({
             {showFiltersMobile && (
               <button
                 onClick={() => setShowFiltersMobile(false)}
-                className="mt-4 w-full py-3 bg-[#c5a880] text-black font-semibold uppercase text-xs tracking-widest rounded-lg"
+                className="mt-4 w-full py-3 bg-[#2dd4bf] text-black font-semibold uppercase text-xs tracking-widest rounded-lg"
               >
                 Apply & View ({filteredProducts.length}) Timepieces
               </button>
@@ -274,7 +274,7 @@ const AllWatches = ({
           <div className="lg:col-span-3">
             {filteredProducts.length === 0 ? (
               <div className="bg-[#121217] border border-[#22222d] rounded-2xl p-12 text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-[#181822] border border-[#2a2a35] mx-auto flex items-center justify-center text-[#c5a880]">
+                <div className="w-16 h-16 rounded-full bg-[#181822] border border-[#2a2a35] mx-auto flex items-center justify-center text-[#2dd4bf]">
                   <Search size={28} />
                 </div>
                 <h3 className="font-['Cinzel'] text-xl font-bold text-white">No Matching Timepieces</h3>
@@ -283,7 +283,7 @@ const AllWatches = ({
                 </p>
                 <button
                   onClick={resetFilters}
-                  className="px-6 py-2.5 bg-[#c5a880] text-black text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-[#d8be98] transition-colors"
+                  className="px-6 py-2.5 bg-[#2dd4bf] text-black text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-[#5eead4] transition-colors"
                 >
                   Reset All Filters
                 </button>

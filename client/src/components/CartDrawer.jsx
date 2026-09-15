@@ -34,7 +34,7 @@ const CartDrawer = () => {
           {/* Header */}
           <div className="p-6 border-b border-[#22222d] flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <ShoppingBag size={20} className="text-[#c5a880]" />
+              <ShoppingBag size={20} className="text-[#2dd4bf]" />
               <h2 className="font-['Cinzel'] tracking-widest text-lg font-bold text-white uppercase">
                 Shopping Bag ({cartItems.reduce((a, b) => a + b.quantity, 0)})
               </h2>
@@ -48,7 +48,7 @@ const CartDrawer = () => {
           </div>
 
           {/* Complimentary Shipping Banner */}
-          <div className="bg-[#181822] px-6 py-3 border-b border-[#22222d] flex items-center space-x-2 text-xs text-[#c5a880]">
+          <div className="bg-[#181822] px-6 py-3 border-b border-[#22222d] flex items-center space-x-2 text-xs text-[#2dd4bf]">
             <Truck size={16} />
             <span>Complimentary Insured Express Delivery Included</span>
           </div>
@@ -69,7 +69,7 @@ const CartDrawer = () => {
                     setIsCartOpen(false);
                     navigate('/watches');
                   }}
-                  className="mt-2 px-6 py-2.5 bg-[#c5a880] text-black text-xs font-semibold uppercase tracking-widest rounded hover:bg-[#d8be98] transition-colors"
+                  className="mt-2 px-6 py-2.5 bg-[#2dd4bf] text-black text-xs font-semibold uppercase tracking-widest rounded hover:bg-[#5eead4] transition-colors"
                 >
                   Explore Timepieces
                 </button>
@@ -102,7 +102,7 @@ const CartDrawer = () => {
                           <Trash2 size={14} />
                         </button>
                       </div>
-                      <p className="text-[11px] text-[#c5a880] mt-0.5">{item.selectedColor}</p>
+                      <p className="text-[11px] text-[#2dd4bf] mt-0.5">{item.selectedColor}</p>
                     </div>
 
                     <div className="flex items-center justify-between mt-3">
@@ -150,13 +150,13 @@ const CartDrawer = () => {
                 </div>
                 <div className="flex justify-between text-gray-400">
                   <span>5-Year International Guarantee</span>
-                  <span className="text-[#c5a880] font-medium">Included</span>
+                  <span className="text-[#2dd4bf] font-medium">Included</span>
                 </div>
               </div>
 
               <div className="pt-2 border-t border-[#1f1f2a] flex justify-between items-baseline">
                 <span className="text-sm uppercase tracking-wider text-gray-300 font-semibold">Estimated Total</span>
-                <span className="text-xl font-bold text-[#c5a880]">
+                <span className="text-xl font-bold text-[#2dd4bf]">
                   {BRAND_CONFIG.currency}{subtotal.toLocaleString()}
                 </span>
               </div>
@@ -164,7 +164,7 @@ const CartDrawer = () => {
               <div className="space-y-2 pt-2">
                 <button
                   onClick={handleCheckout}
-                  className="w-full py-3.5 bg-[#c5a880] hover:bg-[#d8be98] text-black font-semibold text-xs uppercase tracking-widest rounded-lg flex items-center justify-center space-x-2 transition-all shadow-lg shadow-[#c5a880]/20"
+                  className="w-full py-3.5 bg-[#2dd4bf] hover:bg-[#5eead4] text-black font-semibold text-xs uppercase tracking-widest rounded-lg flex items-center justify-center space-x-2 transition-all shadow-lg shadow-[#2dd4bf]/20"
                 >
                   <span>Proceed to Checkout</span>
                   <ArrowRight size={16} />
@@ -179,7 +179,7 @@ const CartDrawer = () => {
               </div>
 
               <div className="flex items-center justify-center space-x-2 text-[10px] text-gray-500 pt-1">
-                <ShieldCheck size={14} className="text-[#c5a880]" />
+                <ShieldCheck size={14} className="text-[#2dd4bf]" />
                 <span>256-Bit Encrypted High-Security Checkout</span>
               </div>
             </div>

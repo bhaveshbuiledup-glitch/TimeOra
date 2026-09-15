@@ -25,7 +25,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-full border border-[#c5a880]/30 bg-[#15151c] flex items-center justify-center flex-shrink-0 text-[#c5a880]">
+              <div className="w-12 h-12 rounded-full border border-[#2dd4bf]/30 bg-[#15151c] flex items-center justify-center flex-shrink-0 text-[#2dd4bf]">
                 <Truck size={22} />
               </div>
               <div>
@@ -35,7 +35,7 @@ const Footer = () => {
             </div>
 
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-full border border-[#c5a880]/30 bg-[#15151c] flex items-center justify-center flex-shrink-0 text-[#c5a880]">
+              <div className="w-12 h-12 rounded-full border border-[#2dd4bf]/30 bg-[#15151c] flex items-center justify-center flex-shrink-0 text-[#2dd4bf]">
                 <ShieldCheck size={22} />
               </div>
               <div>
@@ -45,7 +45,7 @@ const Footer = () => {
             </div>
 
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-full border border-[#c5a880]/30 bg-[#15151c] flex items-center justify-center flex-shrink-0 text-[#c5a880]">
+              <div className="w-12 h-12 rounded-full border border-[#2dd4bf]/30 bg-[#15151c] flex items-center justify-center flex-shrink-0 text-[#2dd4bf]">
                 <RefreshCw size={22} />
               </div>
               <div>
@@ -55,7 +55,7 @@ const Footer = () => {
             </div>
 
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-full border border-[#c5a880]/30 bg-[#15151c] flex items-center justify-center flex-shrink-0 text-[#c5a880]">
+              <div className="w-12 h-12 rounded-full border border-[#2dd4bf]/30 bg-[#15151c] flex items-center justify-center flex-shrink-0 text-[#2dd4bf]">
                 <Award size={22} />
               </div>
               <div>
@@ -73,8 +73,8 @@ const Footer = () => {
           
           {/* Brand Col */}
           <div className="lg:col-span-2 space-y-5">
-            <Link to="/" className="flex items-center space-x-2">
-              <Watch size={24} className="text-[#c5a880]" />
+            <Link to="/home" className="flex items-center space-x-2">
+              <Watch size={24} className="text-[#2dd4bf]" />
               <span className="font-['Cinzel'] tracking-[0.25em] text-2xl font-bold text-white">
                 {BRAND_CONFIG.name}
               </span>
@@ -84,15 +84,15 @@ const Footer = () => {
             </p>
             <div className="space-y-2 pt-2 text-xs">
               <div className="flex items-center space-x-3 text-gray-300">
-                <MapPin size={16} className="text-[#c5a880] flex-shrink-0" />
+                <MapPin size={16} className="text-[#2dd4bf] flex-shrink-0" />
                 <span>{BRAND_CONFIG.contact.address}</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-300">
-                <Phone size={16} className="text-[#c5a880] flex-shrink-0" />
+                <Phone size={16} className="text-[#2dd4bf] flex-shrink-0" />
                 <span>{BRAND_CONFIG.contact.phone}</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-300">
-                <Mail size={16} className="text-[#c5a880] flex-shrink-0" />
+                <Mail size={16} className="text-[#2dd4bf] flex-shrink-0" />
                 <span>{BRAND_CONFIG.contact.email}</span>
               </div>
             </div>
@@ -102,11 +102,11 @@ const Footer = () => {
           <div>
             <h4 className="text-white uppercase tracking-[0.15em] font-semibold text-xs mb-5">Collections</h4>
             <ul className="space-y-3 text-xs tracking-wider">
-              <li><Link to="/watches" className="hover:text-[#c5a880] transition-colors">All Timepieces</Link></li>
-              <li><Link to="/men" className="hover:text-[#c5a880] transition-colors">Men's Collection</Link></li>
-              <li><Link to="/women" className="hover:text-[#c5a880] transition-colors">Women's Collection</Link></li>
-              <li><Link to="/new-arrivals" className="hover:text-[#c5a880] transition-colors">New Releases</Link></li>
-              <li><Link to="/best-sellers" className="hover:text-[#c5a880] transition-colors">Iconic Best Sellers</Link></li>
+              <li><Link to="/watches" className="hover:text-[#2dd4bf] transition-colors">All Timepieces</Link></li>
+              <li><Link to="/men" className="hover:text-[#2dd4bf] transition-colors">Men's Collection</Link></li>
+              <li><Link to="/women" className="hover:text-[#2dd4bf] transition-colors">Women's Collection</Link></li>
+              <li><Link to="/new-arrivals" className="hover:text-[#2dd4bf] transition-colors">New Releases</Link></li>
+              <li><Link to="/best-sellers" className="hover:text-[#2dd4bf] transition-colors">Iconic Best Sellers</Link></li>
             </ul>
           </div>
 
@@ -114,11 +114,11 @@ const Footer = () => {
           <div>
             <h4 className="text-white uppercase tracking-[0.15em] font-semibold text-xs mb-5">The Maison</h4>
             <ul className="space-y-3 text-xs tracking-wider">
-              <li><Link to="/about" className="hover:text-[#c5a880] transition-colors">Our Heritage</Link></li>
-              <li><Link to="/contact" className="hover:text-[#c5a880] transition-colors">Private Concierge</Link></li>
-              <li><Link to="/account" className="hover:text-[#c5a880] transition-colors">Patron Account</Link></li>
-              <li><Link to="/orders" className="hover:text-[#c5a880] transition-colors">Track Order</Link></li>
-              <li><Link to="/wishlist" className="hover:text-[#c5a880] transition-colors">Curated Wishlist</Link></li>
+              <li><Link to="/about" className="hover:text-[#2dd4bf] transition-colors">Our Heritage</Link></li>
+              <li><Link to="/contact" className="hover:text-[#2dd4bf] transition-colors">Private Concierge</Link></li>
+              <li><Link to="/account" className="hover:text-[#2dd4bf] transition-colors">Patron Account</Link></li>
+              <li><Link to="/orders" className="hover:text-[#2dd4bf] transition-colors">Track Order</Link></li>
+              <li><Link to="/wishlist" className="hover:text-[#2dd4bf] transition-colors">Curated Wishlist</Link></li>
             </ul>
           </div>
 
@@ -129,7 +129,7 @@ const Footer = () => {
               Receive private invitations to limited horological releases and private collector events.
             </p>
             {subscribed ? (
-              <div className="bg-[#c5a880]/10 border border-[#c5a880]/40 rounded p-3 text-[#c5a880] text-xs flex items-center space-x-2">
+              <div className="bg-[#2dd4bf]/10 border border-[#2dd4bf]/40 rounded p-3 text-[#2dd4bf] text-xs flex items-center space-x-2">
                 <Check size={16} />
                 <span>Thank you. You are now subscribed to the TIMEORA Gazette.</span>
               </div>
@@ -142,11 +142,11 @@ const Footer = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="w-full bg-[#14141a] border border-[#2a2a35] rounded px-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#c5a880] pr-10"
+                    className="w-full bg-[#14141a] border border-[#2a2a35] rounded px-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#2dd4bf] pr-10"
                   />
                   <button
                     type="submit"
-                    className="absolute right-1 top-1 bottom-1 px-2.5 bg-[#c5a880] hover:bg-[#d8be98] text-black rounded flex items-center justify-center transition-colors"
+                    className="absolute right-1 top-1 bottom-1 px-2.5 bg-[#2dd4bf] hover:bg-[#5eead4] text-black rounded flex items-center justify-center transition-colors"
                     title="Subscribe"
                   >
                     <ArrowRight size={14} />

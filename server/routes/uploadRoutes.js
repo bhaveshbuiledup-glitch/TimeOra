@@ -1,122 +1,75 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
+const Product = require('../models/Product');
+const { protect, admin } = require('../middleware/authMiddleware');
+const { logError } = require('../utils/logger');
 
-// Memory storage for Vercel & serverless compatibility (no local files written to disk)
-const storage = multer.memoryStorage();
+const uploadDir = path.join(__dirname, '..', 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
-// Image file filter: JPG, JPEG, PNG, WebP
-const imageFileFilter = (req, file, cb) => {
-  const allowedMimeTypes = [
-    'image/jpeg',
-    'image/jpg',
-    'image/png',
-    'image/webp'
-  ];
-
-  if (allowedMimeTypes.includes(file.mimetype.toLowerCase())) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only JPG, JPEG, PNG, and WebP images are allowed.'), false);
-  }
-};
-
-// Video file filter: MP4, WebM, OGG, QuickTime
-const videoFileFilter = (req, file, cb) => {
-  const allowedVideoMimeTypes = [
-    'video/mp4',
-    'video/webm',
-    'video/ogg',
-    'video/quicktime'
-  ];
-
-  if (allowedVideoMimeTypes.includes(file.mimetype.toLowerCase())) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only MP4 and WebM video formats are allowed.'), false);
-  }
-};
-
-const uploadImage = multer({
-  storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max per image
-  fileFilter: imageFileFilter
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename(req, file, cb) {
+    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+  },
 });
 
-const uploadVideo = multer({
+const fileFilter = (req, file, cb) => {
+  const allowed = /jpg|jpeg|png|webp|svg|mp4|webm|ogg/;
+  const ext = allowed.test(path.extname(file.originalname).toLowerCase());
+  const mime = file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/');
+  if (ext && mime) return cb(null, true);
+  cb(new Error('Only images and videos are allowed'));
+};
+
+const upload = multer({
   storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB max per video
-  fileFilter: videoFileFilter
+  limits: { fileSize: 50 * 1024 * 1024 },
+  fileFilter,
 });
 
-// @desc    Upload single product image
-// @route   POST /api/upload
-router.post('/', (req, res) => {
-  uploadImage.single('image')(req, res, (err) => {
-    if (err) {
-      return res.status(400).json({ success: false, message: err.message });
-    }
+router.post('/', protect, admin, upload.single('image'), (req, res) => {
+  try {
     if (!req.file) {
-      return res.status(400).json({ success: false, message: 'No image file provided.' });
+      return res.status(400).json({ success: false, message: 'No image uploaded' });
     }
-
-    const base64Data = req.file.buffer.toString('base64');
-    const dataUrl = `data:${req.file.mimetype};base64,${base64Data}`;
-
-    return res.status(200).json({
-      success: true,
-      message: 'Product image uploaded successfully.',
-      url: dataUrl,
-      fileName: req.file.originalname
-    });
-  });
+    res.json({ success: true, filePath: `/uploads/${req.file.filename}`, fileName: req.file.originalname });
+  } catch (error) {
+    logError(error);
+    res.status(500).json({ success: false, message: 'Upload failed' });
+  }
 });
 
-// @desc    Upload multiple product images (up to 6)
-// @route   POST /api/upload/multiple
-router.post('/multiple', (req, res) => {
-  uploadImage.array('images', 6)(req, res, (err) => {
-    if (err) {
-      return res.status(400).json({ success: false, message: err.message });
-    }
+router.post('/multiple', protect, admin, upload.array('images', 6), (req, res) => {
+  try {
     if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ success: false, message: 'No image files provided.' });
+      return res.status(400).json({ success: false, message: 'No files uploaded' });
     }
-
-    const urls = req.files.map(file => {
-      const base64Data = file.buffer.toString('base64');
-      return `data:${file.mimetype};base64,${base64Data}`;
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: `${urls.length} product images uploaded successfully.`,
-      urls
-    });
-  });
+    const urls = req.files.map(f => `/uploads/${f.filename}`);
+    res.json({ success: true, urls });
+  } catch (error) {
+    logError(error);
+    res.status(500).json({ success: false, message: 'Upload failed' });
+  }
 });
 
-// @desc    Upload single product video (MP4/WebM)
-// @route   POST /api/upload/video
-router.post('/video', (req, res) => {
-  uploadVideo.single('video')(req, res, (err) => {
-    if (err) {
-      return res.status(400).json({ success: false, message: err.message });
-    }
+router.post('/video', protect, admin, upload.single('video'), (req, res) => {
+  try {
     if (!req.file) {
-      return res.status(400).json({ success: false, message: 'No video file provided.' });
+      return res.status(400).json({ success: false, message: 'No video uploaded' });
     }
-
-    const base64Data = req.file.buffer.toString('base64');
-    const dataUrl = `data:${req.file.mimetype};base64,${base64Data}`;
-
-    return res.status(200).json({
-      success: true,
-      message: 'Product video uploaded successfully.',
-      url: dataUrl,
-      fileName: req.file.originalname
-    });
-  });
+    res.json({ success: true, filePath: `/uploads/${req.file.filename}`, fileName: req.file.originalname });
+  } catch (error) {
+    logError(error);
+    res.status(500).json({ success: false, message: 'Upload failed' });
+  }
 });
 
 module.exports = router;

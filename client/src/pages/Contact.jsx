@@ -32,7 +32,7 @@ const Contact = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-semibold text-[#c5a880] uppercase tracking-[0.3em] block mb-2">
+          <span className="text-xs font-semibold text-[#2dd4bf] uppercase tracking-[0.3em] block mb-2">
             Private Horological Concierge
           </span>
           <h1 className="text-3xl sm:text-5xl font-['Cinzel'] font-bold text-white mb-4">
@@ -54,7 +54,7 @@ const Contact = () => {
 
               <div className="space-y-5 text-xs text-gray-300">
                 <div className="flex items-start space-x-3">
-                  <MapPin size={18} className="text-[#c5a880] flex-shrink-0 mt-0.5" />
+                  <MapPin size={18} className="text-[#2dd4bf] flex-shrink-0 mt-0.5" />
                   <div>
                     <span className="font-semibold text-white block">Flagship Atelier</span>
                     <span>{BRAND_CONFIG.contact.address}</span>
@@ -62,7 +62,7 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-3">
-                  <Phone size={18} className="text-[#c5a880] flex-shrink-0 mt-0.5" />
+                  <Phone size={18} className="text-[#2dd4bf] flex-shrink-0 mt-0.5" />
                   <div>
                     <span className="font-semibold text-white block">Direct Concierge</span>
                     <span>{BRAND_CONFIG.contact.phone}</span>
@@ -70,7 +70,7 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-3">
-                  <Mail size={18} className="text-[#c5a880] flex-shrink-0 mt-0.5" />
+                  <Mail size={18} className="text-[#2dd4bf] flex-shrink-0 mt-0.5" />
                   <div>
                     <span className="font-semibold text-white block">Electronic Mail</span>
                     <span>{BRAND_CONFIG.contact.email}</span>
@@ -78,7 +78,7 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-3">
-                  <Clock size={18} className="text-[#c5a880] flex-shrink-0 mt-0.5" />
+                  <Clock size={18} className="text-[#2dd4bf] flex-shrink-0 mt-0.5" />
                   <div>
                     <span className="font-semibold text-white block">Hours of Reception</span>
                     <span>{BRAND_CONFIG.contact.hours}</span>
@@ -88,8 +88,8 @@ const Contact = () => {
             </div>
 
             {/* Atelier Visit Banner */}
-            <div className="bg-[#181822] border border-[#c5a880]/30 rounded-2xl p-6 space-y-3">
-              <div className="flex items-center space-x-2 text-[#c5a880]">
+            <div className="bg-[#181822] border border-[#2dd4bf]/30 rounded-2xl p-6 space-y-3">
+              <div className="flex items-center space-x-2 text-[#2dd4bf]">
                 <Calendar size={18} />
                 <span className="text-xs uppercase tracking-widest font-semibold">Private Viewing Salon</span>
               </div>
@@ -111,7 +111,7 @@ const Contact = () => {
 
               {submitted ? (
                 <div className="py-12 text-center space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-[#1c1c28] border border-[#c5a880] mx-auto flex items-center justify-center text-[#c5a880]">
+                  <div className="w-16 h-16 rounded-full bg-[#1c1c28] border border-[#2dd4bf] mx-auto flex items-center justify-center text-[#2dd4bf]">
                     <CheckCircle2 size={32} />
                   </div>
                   <h3 className="font-['Cinzel'] text-xl font-bold text-white">Inquiry Received</h3>
@@ -130,7 +130,7 @@ const Contact = () => {
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
                         placeholder="Lord / Lady / Mr. / Ms."
-                        className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#c5a880]"
+                        className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#2dd4bf]"
                       />
                     </div>
                     <div>
@@ -141,7 +141,7 @@ const Contact = () => {
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
                         placeholder="patron@example.com"
-                        className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#c5a880]"
+                        className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#2dd4bf]"
                       />
                     </div>
                   </div>
@@ -154,7 +154,7 @@ const Contact = () => {
                         value={formData.phone}
                         onChange={(e) => setFormData({...formData, phone: e.target.value})}
                         placeholder="+1 (555) 000-0000"
-                        className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#c5a880]"
+                        className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#2dd4bf]"
                       />
                     </div>
                     <div>
@@ -162,7 +162,7 @@ const Contact = () => {
                       <select
                         value={formData.subject}
                         onChange={(e) => setFormData({...formData, subject: e.target.value})}
-                        className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#c5a880] cursor-pointer"
+                        className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#2dd4bf] cursor-pointer"
                       >
                         <option value="Timepiece Acquisition Inquiry">Timepiece Acquisition Inquiry</option>
                         <option value="Private Atelier Appointment">Private Atelier Appointment</option>
@@ -181,13 +181,13 @@ const Contact = () => {
                       value={formData.message}
                       onChange={(e) => setFormData({...formData, message: e.target.value})}
                       placeholder="Please specify any specific references, questions, or appointment preferences..."
-                      className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#c5a880]"
+                      className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#2dd4bf]"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-4 bg-[#c5a880] hover:bg-[#d8be98] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-[#c5a880]/20"
+                    className="w-full py-4 bg-[#2dd4bf] hover:bg-[#5eead4] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-[#2dd4bf]/20"
                   >
                     <Send size={15} />
                     <span>Submit Inquiry</span>

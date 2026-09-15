@@ -32,7 +32,7 @@ const Cart = () => {
       <div className="min-h-screen bg-[#0b0b0d] pt-36 pb-24 text-gray-100 flex items-center justify-center">
         <div className="max-w-md w-full mx-auto px-4 text-center space-y-6">
           <div className="w-20 h-20 rounded-full bg-[#15151e] border border-[#262635] mx-auto flex items-center justify-center text-gray-400 shadow-xl">
-            <ShoppingBag size={36} className="text-[#c5a880]" />
+            <ShoppingBag size={36} className="text-[#2dd4bf]" />
           </div>
           <h1 className="text-3xl font-['Cinzel'] font-bold text-white">Your Bag is Empty</h1>
           <p className="text-sm text-gray-400 font-light leading-relaxed">
@@ -40,7 +40,7 @@ const Cart = () => {
           </p>
           <Link
             to="/watches"
-            className="inline-flex items-center space-x-2 px-8 py-3.5 bg-[#c5a880] text-black font-semibold text-xs uppercase tracking-widest rounded-lg hover:bg-[#d8be98] transition-colors shadow-lg"
+            className="inline-flex items-center space-x-2 px-8 py-3.5 bg-[#2dd4bf] text-black font-semibold text-xs uppercase tracking-widest rounded-lg hover:bg-[#5eead4] transition-colors shadow-lg"
           >
             <span>Explore Timepieces</span>
             <ArrowRight size={16} />
@@ -81,7 +81,7 @@ const Cart = () => {
             {cartItems.map((item) => (
               <div 
                 key={`${item.id}-${item.selectedColor}`}
-                className="bg-[#13131a] border border-[#22222e] rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-[#c5a880]/30 transition-all"
+                className="bg-[#13131a] border border-[#22222e] rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-[#2dd4bf]/30 transition-all"
               >
                 {/* Image & Title */}
                 <div className="flex items-center space-x-5">
@@ -96,11 +96,11 @@ const Cart = () => {
                     </span>
                     <Link 
                       to={`/product/${item.id}`} 
-                      className="font-['Cinzel'] font-bold text-base text-white hover:text-[#c5a880] transition-colors"
+                      className="font-['Cinzel'] font-bold text-base text-white hover:text-[#2dd4bf] transition-colors"
                     >
                       {item.name}
                     </Link>
-                    <p className="text-xs text-[#c5a880] mt-1 font-medium">Edition: {item.selectedColor}</p>
+                    <p className="text-xs text-[#2dd4bf] mt-1 font-medium">Edition: {item.selectedColor}</p>
                     <span className="text-xs text-gray-400 block mt-1">
                       {BRAND_CONFIG.currency}{item.price.toLocaleString()} each
                     </span>
@@ -148,7 +148,7 @@ const Cart = () => {
             <div className="pt-4">
               <Link 
                 to="/watches"
-                className="inline-flex items-center space-x-2 text-xs uppercase tracking-widest text-[#c5a880] hover:underline font-semibold"
+                className="inline-flex items-center space-x-2 text-xs uppercase tracking-widest text-[#2dd4bf] hover:underline font-semibold"
               >
                 <ArrowLeft size={14} />
                 <span>Continue Exploring Timepieces</span>
@@ -173,12 +173,12 @@ const Cart = () => {
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value)}
                       placeholder="Promo Code (e.g. ROYAL10)"
-                      className="w-full bg-[#181822] border border-[#2a2a38] rounded-lg pl-9 pr-3 py-2 text-xs text-white uppercase placeholder-gray-500 focus:outline-none focus:border-[#c5a880]"
+                      className="w-full bg-[#181822] border border-[#2a2a38] rounded-lg pl-9 pr-3 py-2 text-xs text-white uppercase placeholder-gray-500 focus:outline-none focus:border-[#2dd4bf]"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-[#22222e] hover:bg-[#c5a880] text-gray-300 hover:text-black text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors"
+                    className="px-4 py-2 bg-[#22222e] hover:bg-[#2dd4bf] text-gray-300 hover:text-black text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors"
                   >
                     Apply
                   </button>
@@ -224,7 +224,7 @@ const Cart = () => {
               {/* Total */}
               <div className="pt-4 border-t border-[#20202c] flex justify-between items-baseline">
                 <span className="text-sm font-semibold uppercase tracking-wider text-gray-200">Total</span>
-                <span className="text-2xl font-bold text-[#c5a880]">
+                <span className="text-2xl font-bold text-[#2dd4bf]">
                   {BRAND_CONFIG.currency}{finalTotal.toLocaleString()}
                 </span>
               </div>
@@ -232,7 +232,7 @@ const Cart = () => {
               {/* Checkout Button */}
               <button
                 onClick={() => navigate('/checkout')}
-                className="w-full py-4 bg-[#c5a880] hover:bg-[#d8be98] text-black font-bold text-xs uppercase tracking-[0.2em] rounded-xl flex items-center justify-center space-x-2 transition-all shadow-xl shadow-[#c5a880]/20"
+                className="w-full py-4 bg-[#2dd4bf] hover:bg-[#5eead4] text-black font-bold text-xs uppercase tracking-[0.2em] rounded-xl flex items-center justify-center space-x-2 transition-all shadow-xl shadow-[#2dd4bf]/20"
               >
                 <span>Proceed to Secure Checkout</span>
                 <ArrowRight size={16} />
@@ -240,7 +240,7 @@ const Cart = () => {
 
               {/* Badges */}
               <div className="pt-2 text-center text-[10px] text-gray-400 space-y-1">
-                <div className="flex items-center justify-center space-x-1 text-[#c5a880]">
+                <div className="flex items-center justify-center space-x-1 text-[#2dd4bf]">
                   <ShieldCheck size={14} />
                   <span className="font-semibold">TIMEORA Concierge Assurance</span>
                 </div>

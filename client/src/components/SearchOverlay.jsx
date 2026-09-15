@@ -52,8 +52,8 @@ const SearchOverlay = ({ isOpen, onClose }) => {
 
       <div className="w-full max-w-2xl">
         {/* Search input container */}
-        <div className="relative border-b-2 border-[#c5a880] pb-3 mb-8">
-          <Search size={26} className="absolute left-0 top-2 text-[#c5a880]" />
+        <div className="relative border-b-2 border-[#2dd4bf] pb-3 mb-8">
+          <Search size={26} className="absolute left-0 top-2 text-[#2dd4bf]" />
           <input
             ref={inputRef}
             type="text"
@@ -83,7 +83,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
                 <button
                   key={term}
                   onClick={() => setQuery(term)}
-                  className="px-3.5 py-1.5 rounded-full text-xs bg-[#1a1a24] text-gray-300 hover:bg-[#c5a880] hover:text-black transition-colors border border-[#2a2a38]"
+                  className="px-3.5 py-1.5 rounded-full text-xs bg-[#1a1a24] text-gray-300 hover:bg-[#2dd4bf] hover:text-black transition-colors border border-[#2a2a38]"
                 >
                   {term}
                 </button>
@@ -111,7 +111,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
                     key={item.id}
                     to={`/product/${item.id}`}
                     onClick={onClose}
-                    className="flex items-center space-x-4 p-3 rounded-xl bg-[#14141c] hover:bg-[#1e1e28] border border-[#22222d] hover:border-[#c5a880]/50 transition-all group"
+                    className="flex items-center space-x-4 p-3 rounded-xl bg-[#14141c] hover:bg-[#1e1e28] border border-[#22222d] hover:border-[#2dd4bf]/50 transition-all group"
                   >
                     <img 
                       src={item.images?.[0]} 
@@ -119,12 +119,12 @@ const SearchOverlay = ({ isOpen, onClose }) => {
                       className="w-16 h-16 object-cover rounded-lg bg-[#0d0d12]" 
                     />
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-2 text-[10px] text-[#c5a880] uppercase tracking-wider">
+                      <div className="flex items-center space-x-2 text-[10px] text-[#2dd4bf] uppercase tracking-wider">
                         <span>{item.category}</span>
                         <span>•</span>
                         <span>{item.gender}</span>
                       </div>
-                      <h4 className="text-sm font-semibold text-white group-hover:text-[#c5a880] font-['Cinzel'] truncate transition-colors">
+                      <h4 className="text-sm font-semibold text-white group-hover:text-[#2dd4bf] font-['Cinzel'] truncate transition-colors">
                         {item.name}
                       </h4>
                       <p className="text-xs text-gray-400 truncate">{item.movement}</p>
@@ -134,13 +134,13 @@ const SearchOverlay = ({ isOpen, onClose }) => {
                       <span className="text-sm font-bold text-white">
                         {BRAND_CONFIG.currency}{(item.discountPrice || item.price).toLocaleString()}
                       </span>
-                      <div className="flex items-center text-[#c5a880] text-[10px] mt-0.5">
+                      <div className="flex items-center text-[#2dd4bf] text-[10px] mt-0.5">
                         <Star size={10} fill="currentColor" className="mr-0.5" />
                         <span>{item.rating}</span>
                       </div>
                     </div>
 
-                    <ArrowRight size={16} className="text-gray-500 group-hover:text-[#c5a880] group-hover:translate-x-1 transition-all" />
+                    <ArrowRight size={16} className="text-gray-500 group-hover:text-[#2dd4bf] group-hover:translate-x-1 transition-all" />
                   </Link>
                 ))}
               </div>

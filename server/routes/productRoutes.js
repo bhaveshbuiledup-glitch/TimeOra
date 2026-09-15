@@ -1,32 +1,214 @@
 const express = require('express');
 const router = express.Router();
-const {
-  getProducts,
-  getProductById,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-} = require('../controllers/productController');
+const Product = require('../models/Product');
+const Category = require('../models/Category');
 const { protect, admin } = require('../middleware/authMiddleware');
-const upload = require('../middleware/uploadMiddleware');
+const { logError } = require('../utils/logger');
+const { v4: uuidv4 } = require('uuid');
 
-router.route('/')
-  .get(getProducts)
-  .post(protect, admin, createProduct);
+const validateObjectId = (id) => {
+  if (!id) return null;
+  try { return new mongoose.Types.ObjectId(id); } catch { return null; }
+};
+const mongoose = require('mongoose');
 
-router.post('/upload', protect, admin, upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ success: false, message: 'No image uploaded' });
+router.get('/', async (req, res) => {
+  try {
+    const { category, search, sort } = req.query;
+    let query = { isActive: true };
+
+    if (category && category !== 'All') {
+      query.category = category;
+    }
+
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { sku: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { movement: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    let sortOpt = { createdAt: -1 };
+    if (sort === 'price-low') sortOpt = { price: 1 };
+    if (sort === 'price-high') sortOpt = { price: -1 };
+    if (sort === 'popularity') sortOpt = { reviewsCount: -1 };
+
+    let products;
+    if (mongoose.connection.readyState === 1) {
+      products = await Product.find(query).sort(sortOpt).lean();
+    } else {
+      return res.json({ success: true, products: [], source: 'no-connection' });
+    }
+
+    const results = products.map(p => ({
+      ...p,
+      id: p._id.toString(),
+      _id: p._id.toString(),
+      effectivePrice: (p.discountPrice && p.discountPrice < p.price) ? p.discountPrice : p.price,
+      discountPercent: (p.discountPrice && p.discountPrice < p.price)
+        ? Math.round(((p.price - p.discountPrice) / p.price) * 100) : 0,
+    }));
+
+    res.json({ success: true, count: results.length, products: results });
+  } catch (error) {
+    logError(error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
-  res.json({
-    success: true,
-    filePath: `/uploads/${req.file.filename}`,
-  });
 });
 
-router.route('/:id')
-  .get(getProductById)
-  .put(protect, admin, updateProduct)
-  .delete(protect, admin, deleteProduct);
+router.get('/categories', async (req, res) => {
+  try {
+    let categories = [];
+    if (mongoose.connection.readyState === 1) {
+      categories = await Category.find({ isActive: true }).sort({ sortOrder: 1 }).lean();
+    }
+    res.json({ success: true, categories });
+  } catch (error) {
+    logError(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  try {
+    let product;
+    const id = req.params.id;
+
+    if (mongoose.connection.readyState === 1) {
+      if (id.match(/^[0-9a-fA-F]{24}$/)) {
+        product = await Product.findById(id).lean();
+      } else {
+        product = await Product.findOne({ sku: id }).lean();
+      }
+    }
+
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    product.id = product._id.toString();
+    product.effectivePrice = (product.discountPrice && product.discountPrice < product.price)
+      ? product.discountPrice : product.price;
+    product.discountPercent = (product.discountPrice && product.discountPrice < product.price)
+      ? Math.round(((product.price - product.discountPrice) / product.price) * 100) : 0;
+
+    res.json({ success: true, product });
+  } catch (error) {
+    logError(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+router.post('/', protect, admin, async (req, res) => {
+  try {
+    const { name, price, category, gender, description, stock, sku, discountPrice, images, video, tagline, specifications } = req.body;
+
+    if (!name || !price || !category || !gender || !description || !sku) {
+      return res.status(400).json({ success: false, message: 'Missing required fields' });
+    }
+
+    const existingSku = await Product.findOne({ sku });
+    if (existingSku) {
+      return res.status(400).json({ success: false, message: 'SKU already exists' });
+    }
+
+    let categoryId = category;
+    if (mongoose.Types.ObjectId.isValid(category)) {
+      const cat = await Category.findById(category);
+      if (cat) categoryId = category;
+    }
+
+    const productData = {
+      name, price: Number(price),
+      discountPrice: discountPrice ? Number(discountPrice) : null,
+      category: categoryId, categoryName: typeof category === 'string' ? category : '',
+      gender, description,
+      stock: Number(stock) >= 0 ? Number(stock) : 10,
+      lowStockThreshold: 5,
+      sku, images: Array.isArray(images) && images.length > 0 ? images : [req.body.image || ''],
+      video: video || '', tagline: tagline || '',
+      specifications: specifications || {},
+      rating: 5.0, reviewsCount: 0,
+    };
+
+    let product;
+    if (mongoose.connection.readyState === 1) {
+      product = await Product.create(productData);
+    }
+
+    res.status(201).json({
+      success: true,
+      product: { ...product.toObject(), id: product._id.toString(), discountPercent: 0 },
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({ success: false, message: 'SKU already exists' });
+    }
+    logError(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+router.put('/:id', protect, admin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = { ...req.body };
+
+    if (updates.price) updates.price = Number(updates.price);
+    if (updates.discountPrice !== undefined) updates.discountPrice = updates.discountPrice ? Number(updates.discountPrice) : null;
+    if (updates.stock !== undefined) updates.stock = Number(updates.stock);
+
+    let product;
+    if (mongoose.connection.readyState === 1 && mongoose.Types.ObjectId.isValid(id)) {
+      product = await Product.findByIdAndUpdate(id, updates, { new: true, runValidators: true }).lean();
+    }
+
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    product.id = product._id.toString();
+    product.effectivePrice = (product.discountPrice && product.discountPrice < product.price) ? product.discountPrice : product.price;
+    product.discountPercent = (product.discountPrice && product.discountPrice < product.price)
+      ? Math.round(((product.price - product.discountPrice) / product.price) * 100) : 0;
+
+    res.json({ success: true, product });
+  } catch (error) {
+    logError(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+router.delete('/:id', protect, admin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (mongoose.connection.readyState === 1 && mongoose.Types.ObjectId.isValid(id)) {
+      const product = await Product.findByIdAndUpdate(id, { isActive: false }, { new: true });
+      if (product) return res.json({ success: true, message: 'Product deactivated' });
+    }
+    res.status(404).json({ success: false, message: 'Product not found' });
+  } catch (error) {
+    logError(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+router.post('/:id/stock', protect, admin, async (req, res) => {
+  try {
+    const { quantity, note } = req.body;
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
+
+    product.stock = Math.max(0, product.stock + Number(quantity));
+    await product.save();
+
+    res.json({ success: true, product });
+  } catch (error) {
+    logError(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
 
 module.exports = router;

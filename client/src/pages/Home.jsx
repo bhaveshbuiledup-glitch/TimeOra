@@ -71,7 +71,7 @@ const Home = () => {
 
         {/* Hero Content */}
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-16">
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#181824]/80 border border-[#c5a880]/30 text-[#c5a880] text-xs uppercase tracking-[0.25em] mb-6 backdrop-blur-md">
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#181824]/80 border border-[#2dd4bf]/30 text-[#2dd4bf] text-xs uppercase tracking-[0.25em] mb-6 backdrop-blur-md">
             <Sparkles size={14} />
             <span>Masterpieces of Haute Horlogerie</span>
           </div>
@@ -87,7 +87,7 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
             <Link
               to="/watches"
-              className="w-full sm:w-auto px-8 py-4 bg-[#c5a880] hover:bg-[#d8be98] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-md transition-all shadow-xl shadow-[#c5a880]/20 flex items-center justify-center space-x-3 group"
+              className="w-full sm:w-auto px-8 py-4 bg-[#2dd4bf] hover:bg-[#5eead4] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-md transition-all shadow-xl shadow-[#2dd4bf]/20 flex items-center justify-center space-x-3 group"
             >
               <span>Shop Watches</span>
               <ArrowRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
@@ -95,7 +95,7 @@ const Home = () => {
 
             <Link
               to="/about"
-              className="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-semibold text-xs uppercase tracking-[0.2em] rounded-md border border-white/20 hover:border-[#c5a880] transition-all flex items-center justify-center space-x-2 backdrop-blur-md"
+              className="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-semibold text-xs uppercase tracking-[0.2em] rounded-md border border-white/20 hover:border-[#2dd4bf] transition-all flex items-center justify-center space-x-2 backdrop-blur-md"
             >
               <span>Explore Collection</span>
             </Link>
@@ -127,7 +127,7 @@ const Home = () => {
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <div>
-            <span className="text-xs font-semibold text-[#c5a880] uppercase tracking-[0.3em] block mb-2">
+            <span className="text-xs font-semibold text-[#2dd4bf] uppercase tracking-[0.3em] block mb-2">
               Curated Selection
             </span>
             <h2 className="text-2xl sm:text-4xl font-['Cinzel'] font-bold text-white tracking-wide">
@@ -136,7 +136,7 @@ const Home = () => {
           </div>
           <Link 
             to="/watches" 
-            className="mt-4 md:mt-0 inline-flex items-center space-x-2 text-xs uppercase tracking-widest text-[#c5a880] hover:text-[#e6d5be] transition-colors font-medium group"
+            className="mt-4 md:mt-0 inline-flex items-center space-x-2 text-xs uppercase tracking-widest text-[#2dd4bf] hover:text-[#e6d5be] transition-colors font-medium group"
           >
             <span>View All Models</span>
             <ChevronRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
@@ -167,7 +167,7 @@ const Home = () => {
                 className="w-full h-full object-cover filter brightness-[0.5] group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent p-8 sm:p-10 flex flex-col justify-end">
-                <span className="text-[#c5a880] text-xs uppercase tracking-[0.25em] font-semibold mb-2">
+                <span className="text-[#2dd4bf] text-xs uppercase tracking-[0.25em] font-semibold mb-2">
                   Gentlemen's Horology
                 </span>
                 <h3 className="font-['Cinzel'] text-2xl sm:text-3xl font-bold text-white mb-2">
@@ -178,7 +178,7 @@ const Home = () => {
                 </p>
                 <Link
                   to="/men"
-                  className="inline-flex items-center space-x-2 text-xs uppercase tracking-[0.2em] font-semibold text-white group-hover:text-[#c5a880] transition-colors"
+                  className="inline-flex items-center space-x-2 text-xs uppercase tracking-[0.2em] font-semibold text-white group-hover:text-[#2dd4bf] transition-colors"
                 >
                   <span>Explore Men's Watches</span>
                   <ArrowRight size={16} />
@@ -194,7 +194,7 @@ const Home = () => {
                 className="w-full h-full object-cover filter brightness-[0.5] group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent p-8 sm:p-10 flex flex-col justify-end">
-                <span className="text-[#c5a880] text-xs uppercase tracking-[0.25em] font-semibold mb-2">
+                <span className="text-[#2dd4bf] text-xs uppercase tracking-[0.25em] font-semibold mb-2">
                   Grace & Precision
                 </span>
                 <h3 className="font-['Cinzel'] text-2xl sm:text-3xl font-bold text-white mb-2">
@@ -205,7 +205,7 @@ const Home = () => {
                 </p>
                 <Link
                   to="/women"
-                  className="inline-flex items-center space-x-2 text-xs uppercase tracking-[0.2em] font-semibold text-white group-hover:text-[#c5a880] transition-colors"
+                  className="inline-flex items-center space-x-2 text-xs uppercase tracking-[0.2em] font-semibold text-white group-hover:text-[#2dd4bf] transition-colors"
                 >
                   <span>Explore Women's Watches</span>
                   <ArrowRight size={16} />
@@ -221,7 +221,7 @@ const Home = () => {
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <div>
-            <span className="text-xs font-semibold text-[#c5a880] uppercase tracking-[0.3em] block mb-2">
+            <span className="text-xs font-semibold text-[#2dd4bf] uppercase tracking-[0.3em] block mb-2">
               Fresh From The Atelier
             </span>
             <h2 className="text-2xl sm:text-4xl font-['Cinzel'] font-bold text-white tracking-wide">
@@ -230,7 +230,7 @@ const Home = () => {
           </div>
           <Link 
             to="/new-arrivals" 
-            className="mt-4 md:mt-0 inline-flex items-center space-x-2 text-xs uppercase tracking-widest text-[#c5a880] hover:text-[#e6d5be] transition-colors font-medium group"
+            className="mt-4 md:mt-0 inline-flex items-center space-x-2 text-xs uppercase tracking-widest text-[#2dd4bf] hover:text-[#e6d5be] transition-colors font-medium group"
           >
             <span>View All New Releases</span>
             <ChevronRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
@@ -252,7 +252,7 @@ const Home = () => {
       <section className="py-20 bg-gradient-to-b from-[#0e0e13] to-[#08080a] border-y border-[#1c1c24]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-semibold text-[#c5a880] uppercase tracking-[0.3em] block mb-3">
+            <span className="text-xs font-semibold text-[#2dd4bf] uppercase tracking-[0.3em] block mb-3">
               Uncompromising Standards
             </span>
             <h2 className="text-3xl sm:text-4xl font-['Cinzel'] font-bold text-white mb-4">
@@ -264,8 +264,8 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-[#14141c] border border-[#22222d] rounded-2xl p-8 transition-all hover:border-[#c5a880]/40 hover:-translate-y-1">
-              <div className="w-14 h-14 rounded-full bg-[#1c1c28] border border-[#c5a880]/30 flex items-center justify-center text-[#c5a880] mb-6">
+            <div className="bg-[#14141c] border border-[#22222d] rounded-2xl p-8 transition-all hover:border-[#2dd4bf]/40 hover:-translate-y-1">
+              <div className="w-14 h-14 rounded-full bg-[#1c1c28] border border-[#2dd4bf]/30 flex items-center justify-center text-[#2dd4bf] mb-6">
                 <Clock size={26} />
               </div>
               <h3 className="font-['Cinzel'] text-lg font-bold text-white mb-3">
@@ -276,8 +276,8 @@ const Home = () => {
               </p>
             </div>
 
-            <div className="bg-[#14141c] border border-[#22222d] rounded-2xl p-8 transition-all hover:border-[#c5a880]/40 hover:-translate-y-1">
-              <div className="w-14 h-14 rounded-full bg-[#1c1c28] border border-[#c5a880]/30 flex items-center justify-center text-[#c5a880] mb-6">
+            <div className="bg-[#14141c] border border-[#22222d] rounded-2xl p-8 transition-all hover:border-[#2dd4bf]/40 hover:-translate-y-1">
+              <div className="w-14 h-14 rounded-full bg-[#1c1c28] border border-[#2dd4bf]/30 flex items-center justify-center text-[#2dd4bf] mb-6">
                 <Gem size={26} />
               </div>
               <h3 className="font-['Cinzel'] text-lg font-bold text-white mb-3">
@@ -288,8 +288,8 @@ const Home = () => {
               </p>
             </div>
 
-            <div className="bg-[#14141c] border border-[#22222d] rounded-2xl p-8 transition-all hover:border-[#c5a880]/40 hover:-translate-y-1">
-              <div className="w-14 h-14 rounded-full bg-[#1c1c28] border border-[#c5a880]/30 flex items-center justify-center text-[#c5a880] mb-6">
+            <div className="bg-[#14141c] border border-[#22222d] rounded-2xl p-8 transition-all hover:border-[#2dd4bf]/40 hover:-translate-y-1">
+              <div className="w-14 h-14 rounded-full bg-[#1c1c28] border border-[#2dd4bf]/30 flex items-center justify-center text-[#2dd4bf] mb-6">
                 <ShieldCheck size={26} />
               </div>
               <h3 className="font-['Cinzel'] text-lg font-bold text-white mb-3">
@@ -307,7 +307,7 @@ const Home = () => {
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <div>
-            <span className="text-xs font-semibold text-[#c5a880] uppercase tracking-[0.3em] block mb-2">
+            <span className="text-xs font-semibold text-[#2dd4bf] uppercase tracking-[0.3em] block mb-2">
               Enduring Icons
             </span>
             <h2 className="text-2xl sm:text-4xl font-['Cinzel'] font-bold text-white tracking-wide">
@@ -316,7 +316,7 @@ const Home = () => {
           </div>
           <Link 
             to="/best-sellers" 
-            className="mt-4 md:mt-0 inline-flex items-center space-x-2 text-xs uppercase tracking-widest text-[#c5a880] hover:text-[#e6d5be] transition-colors font-medium group"
+            className="mt-4 md:mt-0 inline-flex items-center space-x-2 text-xs uppercase tracking-widest text-[#2dd4bf] hover:text-[#e6d5be] transition-colors font-medium group"
           >
             <span>View All Best Sellers</span>
             <ChevronRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
@@ -338,7 +338,7 @@ const Home = () => {
       <section className="py-20 bg-[#0d0d12] border-t border-[#181822]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-xs font-semibold text-[#c5a880] uppercase tracking-[0.3em] block mb-2">
+            <span className="text-xs font-semibold text-[#2dd4bf] uppercase tracking-[0.3em] block mb-2">
               Patron Testimonials
             </span>
             <h2 className="text-2xl sm:text-4xl font-['Cinzel'] font-bold text-white">
@@ -353,7 +353,7 @@ const Home = () => {
                 className="bg-[#13131a] border border-[#22222d] rounded-2xl p-8 flex flex-col justify-between relative shadow-lg"
               >
                 <div>
-                  <div className="flex items-center space-x-1 text-[#c5a880] mb-4">
+                  <div className="flex items-center space-x-1 text-[#2dd4bf] mb-4">
                     {[...Array(review.rating)].map((_, i) => (
                       <Star key={i} size={15} fill="currentColor" />
                     ))}
@@ -366,7 +366,7 @@ const Home = () => {
                 <div className="pt-4 border-t border-[#1e1e28]">
                   <h4 className="font-semibold text-white text-sm font-['Cinzel']">{review.name}</h4>
                   <p className="text-[11px] text-gray-400 mt-0.5">{review.title}</p>
-                  <span className="text-[10px] text-[#c5a880] block mt-1 uppercase tracking-wider font-mono">
+                  <span className="text-[10px] text-[#2dd4bf] block mt-1 uppercase tracking-wider font-mono">
                     Owner of {review.watch}
                   </span>
                 </div>

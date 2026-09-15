@@ -10,202 +10,83 @@ export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState(() => {
     try {
       const saved = localStorage.getItem('timeora_products');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      }
-      return WATCH_PRODUCTS;
-    } catch {
-      return WATCH_PRODUCTS;
-    }
+      if (saved) { const parsed = JSON.parse(saved); if (Array.isArray(parsed) && parsed.length) return parsed; }
+    } catch {}
+    return WATCH_PRODUCTS;
   });
-
   const [loading, setLoading] = useState(false);
 
-  // Sync with localStorage
   useEffect(() => {
-    try {
-      localStorage.setItem('timeora_products', JSON.stringify(products));
-    } catch (e) {
-      console.error('Failed to persist products to localStorage:', e);
-    }
-  }, [products]);
-
-  // Attempt sync with backend on mount
-  useEffect(() => {
-    const fetchRemoteProducts = async () => {
+    const fetchProducts = async () => {
       try {
         setLoading(true);
         const res = await axios.get(API_URL);
-        if (res.data?.products && Array.isArray(res.data.products) && res.data.products.length > 0) {
-          // Merge remote products if valid
-          const remoteList = res.data.products.map(p => ({
-            ...p,
-            id: p.id || p._id || p.sku
+        if (res.data?.products?.length) {
+          const remote = res.data.products.map(p => ({
+            ...p, id: p.id || p._id || p.sku, _id: p._id || p.id || p.sku,
           }));
           setProducts(prev => {
-            // Keep local creations if they exist
-            const existingIds = new Set(remoteList.map(r => r.id));
-            const localOnly = prev.filter(item => !existingIds.has(item.id));
-            return [...localOnly, ...remoteList];
+            const ids = new Set(remote.map(r => r.id));
+            const localOnly = prev.filter(i => !ids.has(i.id));
+            return [...localOnly, ...remote];
           });
         }
       } catch (err) {
-        console.log('Using local catalog state:', err.message);
+        console.log('Using local catalog:', err.message);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchRemoteProducts();
+    fetchProducts();
   }, []);
 
-  // Add new product
-  const addProduct = async (productData) => {
-    const newId = `tm-${Date.now()}`;
+  const addProduct = async (data) => {
     const formatted = {
-      id: newId,
-      _id: newId,
-      name: productData.name?.trim() || 'TIMEORA Masterpiece',
-      brand: 'TIMEORA',
-      tagline: productData.tagline?.trim() || 'Precision Handcrafted Horology',
-      description: productData.description?.trim() || 'Handcrafted luxury timepiece.',
-      price: Number(productData.price) || 1200,
-      discountPrice: productData.discountPrice ? Number(productData.discountPrice) : null,
-      category: productData.category || 'Chronograph',
-      gender: productData.gender || 'Unisex',
-      stock: Number(productData.stock) >= 0 ? Number(productData.stock) : 10,
-      sku: productData.sku?.trim() || `TM-${Math.floor(1000 + Math.random() * 9000)}`,
-      images: Array.isArray(productData.images) && productData.images.length > 0
-        ? productData.images
-        : [productData.image || 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200'],
-      video: productData.video || '',
-      colors: productData.colors && productData.colors.length > 0 
-        ? productData.colors 
-        : ['Obsidian Black', 'Champagne Gold'],
-      strapMaterial: productData.strapMaterial || 'Italian Hand-Stitched Leather',
-      caseMaterial: productData.caseMaterial || '316L Surgical Stainless Steel',
-      dialColor: productData.dialColor || 'Sunburst Black',
-      movement: productData.movement || 'Calibre TM Automatic (28,800 vph)',
-      waterResistance: productData.waterResistance || '100M / 10 ATM',
-      warranty: '5-Year International Manufacturer Warranty',
-      featured: !!productData.featured,
-      bestSeller: !!productData.bestSeller,
-      newArrival: true,
-      rating: 5.0,
-      reviewsCount: 1,
-      createdAt: new Date().toISOString()
+      id: `tm-${Date.now()}`, _id: `tm-${Date.now()}`,
+      name: data.name || 'TIMEORA Masterpiece',
+      brand: 'TIMEORA', price: Number(data.price) || 1200,
+      discountPrice: data.discountPrice || null, category: data.category || 'Chronograph',
+      gender: data.gender || 'Unisex', stock: Number(data.stock) >= 0 ? Number(data.stock) : 10,
+      sku: data.sku || `TM-${Math.floor(1000 + Math.random() * 9000)}`,
+      images: data.images || [data.image || ''], video: data.video || '',
+      rating: 5.0, reviewsCount: 1,
     };
-
     setProducts(prev => [formatted, ...prev]);
-
-    // Background sync to backend
     try {
       const token = localStorage.getItem('timeora_token');
-      await axios.post(API_URL, formatted, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
-    } catch (e) {
-      console.warn('Backend product creation synced locally:', e.message);
-    }
-
+      await axios.post(API_URL, formatted, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+    } catch (e) { console.warn('Backend sync failed:', e.message); }
     return formatted;
   };
 
-  // Update existing product
-  const updateProduct = async (id, updatedFields) => {
-    let updatedItem = null;
-
+  const updateProduct = async (id, updates) => {
     setProducts(prev => prev.map(item => {
-      if (item.id === id || item._id === id || item.sku === id) {
-        updatedItem = {
-          ...item,
-          ...updatedFields,
-          // Ensure numbers are properly parsed
-          price: updatedFields.price !== undefined ? Number(updatedFields.price) : item.price,
-          stock: updatedFields.stock !== undefined ? Number(updatedFields.stock) : item.stock,
-          discountPrice: updatedFields.discountPrice !== undefined 
-            ? (updatedFields.discountPrice ? Number(updatedFields.discountPrice) : null)
-            : item.discountPrice
-        };
-        return updatedItem;
+      if (item.id === id || item.sku === id) {
+        return { ...item, ...updates, price: updates.price !== undefined ? Number(updates.price) : item.price, stock: updates.stock !== undefined ? Number(updates.stock) : item.stock };
       }
       return item;
     }));
-
-    // Background sync to backend
     try {
       const token = localStorage.getItem('timeora_token');
-      await axios.put(`${API_URL}/${id}`, updatedFields, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
-    } catch (e) {
-      console.warn('Backend product update synced locally:', e.message);
-    }
-
-    return updatedItem;
+      await axios.put(`${API_URL}/${id}`, updates, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+    } catch (e) { console.warn('Backend sync failed:', e.message); }
   };
 
-  // Delete product
   const deleteProduct = async (id) => {
-    setProducts(prev => prev.filter(item => item.id !== id && item._id !== id && item.sku !== id));
-
-    try {
-      const token = localStorage.getItem('timeora_token');
-      await axios.delete(`${API_URL}/${id}`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
-    } catch (e) {
-      console.warn('Backend product deletion synced locally:', e.message);
-    }
+    setProducts(prev => prev.filter(item => item.id !== id && item.sku !== id));
   };
 
-  // Mark Out of Stock (sets stock to 0)
-  const markOutOfStock = async (id) => {
-    return await updateProduct(id, { stock: 0 });
-  };
-
-  // Mark Available (restores stock)
-  const markAvailable = async (id, quantity = 10) => {
-    return await updateProduct(id, { stock: Number(quantity) > 0 ? Number(quantity) : 10 });
-  };
-
-  // Set / Enable Discount Offer
-  const setProductOffer = async (id, offerPrice) => {
-    return await updateProduct(id, { discountPrice: Number(offerPrice) });
-  };
-
-  // Remove / Disable Discount Offer
-  const removeProductOffer = async (id) => {
-    return await updateProduct(id, { discountPrice: null });
-  };
-
-  // Lookup product
-  const getProductById = (id) => {
-    return products.find(p => p.id === id || p._id === id || p.sku === id) || products[0];
-  };
-
-  // Reset to original brand catalog
-  const resetCatalog = () => {
-    setProducts(WATCH_PRODUCTS);
-    localStorage.removeItem('timeora_products');
-  };
+  const markOutOfStock = async (id) => updateProduct(id, { stock: 0 });
+  const markAvailable = async (id, qty = 10) => updateProduct(id, { stock: Number(qty) > 0 ? Number(qty) : 10 });
+  const setProductOffer = async (id, price) => updateProduct(id, { discountPrice: Number(price) });
+  const removeProductOffer = async (id) => updateProduct(id, { discountPrice: null });
+  const getProductById = (id) => products.find(p => String(p.id) === String(id)) || products[0] || WATCH_PRODUCTS[0];
 
   return (
     <ProductContext.Provider value={{
-      products,
-      loading,
-      addProduct,
-      updateProduct,
-      deleteProduct,
-      markOutOfStock,
-      markAvailable,
-      setProductOffer,
-      removeProductOffer,
+      products, loading, addProduct, updateProduct, deleteProduct,
+      markOutOfStock, markAvailable, setProductOffer, removeProductOffer,
       getProductById,
-      resetCatalog
     }}>
       {children}
     </ProductContext.Provider>

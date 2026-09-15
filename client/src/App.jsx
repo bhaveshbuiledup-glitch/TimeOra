@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { AuthProvider } from './context/AuthContext';
 import { ProductProvider } from './context/ProductContext';
-
-// Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import SearchOverlay from './components/SearchOverlay';
-
-// Pages
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
+import SplashScreen from './pages/SplashScreen';
+import AccountTypeSelection from './pages/AccountTypeSelection';
 import Home from './pages/Home';
 import AllWatches from './pages/AllWatches';
 import MensWatches from './pages/MensWatches';
@@ -24,38 +24,63 @@ import Checkout from './pages/Checkout';
 import OrderSuccess from './pages/OrderSuccess';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import AdminLogin from './pages/AdminLogin';
 import Account from './pages/Account';
 import Orders from './pages/Orders';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Wishlist from './pages/Wishlist';
 import Admin from './pages/Admin';
+import Unauthorized from './pages/Unauthorized';
 import NotFound from './pages/NotFound';
 
-function App() {
+const FullPageLayout = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const location = useLocation();
+  const isAdminRoute = location.pathname === '/admin';
+  return (
+    <div className="flex flex-col min-h-screen bg-[#0b0b0d] text-white">
+      {!isAdminRoute && (
+        <>
+          <Navbar onOpenSearch={() => setIsSearchOpen(true)} />
+          <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+          <CartDrawer />
+        </>
+      )}
+      <main className="flex-grow"><Outlet /></main>
+      {!isAdminRoute && <Footer />}
+    </div>
+  );
+};
 
+const AdminLayout = () => {
+  return (
+    <div className="flex flex-col min-h-screen bg-[#0b0b0d] text-white">
+      <Navbar onOpenSearch={() => {}} />
+      <main className="flex-grow"><Outlet /></main>
+    </div>
+  );
+};
+
+function App() {
   return (
     <AuthProvider>
       <ProductProvider>
         <CartProvider>
           <WishlistProvider>
             <Router>
-              <div className="flex flex-col min-h-screen bg-[#0b0b0d] text-white selection:bg-[#c5a880] selection:text-black">
-                {/* Global Navigation */}
-                <Navbar onOpenSearch={() => setIsSearchOpen(true)} />
+              <Routes>
+                <Route path="/" element={<SplashScreen />} />
+                <Route path="/splash" element={<SplashScreen />} />
+                <Route path="/choose" element={<AccountTypeSelection />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/user-login" element={<Login />} />
+                <Route path="/admin-login" element={<AdminLogin />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/unauthorized" element={<Unauthorized />} />
 
-              {/* Global Overlays (Search modal & Cart drawer) */}
-              <SearchOverlay 
-                isOpen={isSearchOpen} 
-                onClose={() => setIsSearchOpen(false)} 
-              />
-              <CartDrawer />
-
-              {/* Main Routing Content */}
-              <main className="flex-grow">
-                <Routes>
-                  <Route path="/" element={<Home />} />
+                <Route element={<FullPageLayout />}>
+                  <Route path="/home" element={<Home />} />
                   <Route path="/watches" element={<AllWatches />} />
                   <Route path="/men" element={<MensWatches />} />
                   <Route path="/women" element={<WomensWatches />} />
@@ -63,29 +88,26 @@ function App() {
                   <Route path="/best-sellers" element={<BestSellers />} />
                   <Route path="/product/:id" element={<ProductDetails />} />
                   <Route path="/cart" element={<Cart />} />
-                  <Route path="/checkout" element={<Checkout />} />
                   <Route path="/order-success" element={<OrderSuccess />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/account" element={<Account />} />
-                  <Route path="/orders" element={<Orders />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
-                  <Route path="/wishlist" element={<Wishlist />} />
-                  <Route path="/admin" element={<Admin />} />
+                  <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+                  <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+                  <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+                  <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
                   <Route path="*" element={<NotFound />} />
-                </Routes>
-              </main>
+                </Route>
 
-              {/* Global Luxury Footer */}
-              <Footer />
-            </div>
-          </Router>
-        </WishlistProvider>
-      </CartProvider>
-    </ProductProvider>
-  </AuthProvider>
-);
+                <Route element={<AdminLayout />}>
+                  <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+                </Route>
+              </Routes>
+            </Router>
+          </WishlistProvider>
+        </CartProvider>
+      </ProductProvider>
+    </AuthProvider>
+  );
 }
 
 export default App;

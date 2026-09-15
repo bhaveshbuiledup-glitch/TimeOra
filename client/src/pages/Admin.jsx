@@ -56,12 +56,10 @@ const Admin = () => {
     resetCatalog 
   } = useProducts();
 
-  const { adminEmail, updateAdminEmail } = useAuth();
+  const { user } = useAuth();
 
-  // Email editing state (ensuring lowercase always)
-  const [isEditingEmail, setIsEditingEmail] = useState(false);
-  const [emailInput, setEmailInput] = useState(adminEmail.toLowerCase().trim());
-  const [emailSuccessMsg, setEmailSuccessMsg] = useState('');
+  // Admin email from user profile (read-only)
+  const adminEmail = user?.email || 'admin@timeora.com';
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -322,18 +320,6 @@ const Admin = () => {
   // Confirmation Delete State
   const [productToDelete, setProductToDelete] = useState(null);
 
-  // Handle saving admin email in lowercase
-  const handleSaveEmail = (e) => {
-    e.preventDefault();
-    if (!emailInput || !emailInput.includes('@')) return;
-    const lowercased = emailInput.toLowerCase().trim();
-    updateAdminEmail(lowercased);
-    setEmailInput(lowercased);
-    setIsEditingEmail(false);
-    setEmailSuccessMsg('Admin email saved in lowercase.');
-    setTimeout(() => setEmailSuccessMsg(''), 3000);
-  };
-
   // Open modal for new product
   const handleOpenCreateModal = () => {
     setModalMode('create');
@@ -498,19 +484,19 @@ const Admin = () => {
   const availableCount = products.filter(p => p.stock > 0).length;
 
   return (
-    <div className="min-h-screen bg-[#0b0b0d] pt-28 pb-24 text-gray-100">
+    <div className="min-h-screen bg-[#0a0e1a] pt-28 pb-24 text-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Top Header & Admin Email Bar */}
-        <div className="bg-[#121218] border border-[#242432] rounded-2xl p-6 sm:p-8 mb-8 relative shadow-2xl">
+        <div className="border rounded-2xl p-6 sm:p-8 mb-8 relative shadow-2xl" style={{ backgroundColor: '#111827', borderColor: '#1e3048' }}>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-xs uppercase tracking-[0.25em] text-[#c5a880] font-semibold">
+                <span className="text-xs uppercase tracking-[0.25em] text-[#818cf8] font-semibold">
                   Atelier Control Center
                 </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#c5a880] animate-ping" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#818cf8] animate-ping" />
               </div>
               <h1 className="text-2xl sm:text-4xl font-['Cinzel'] font-bold text-white mt-1">
                 Admin Panel & Inventory
@@ -520,83 +506,38 @@ const Admin = () => {
               </p>
             </div>
 
-            {/* Admin Email Box: strictly lowercase display and auto-convert */}
-            <div className="bg-[#161622] border border-[#2e2e42] rounded-xl p-4 flex flex-col justify-between">
+            {/* Admin Email Box: read-only display */}
+            <div className="rounded-xl p-4 flex flex-col justify-between" style={{ backgroundColor: '#0f172a', borderColor: '#1e3a5f', borderWidth: 1 }}>
               <div className="flex items-center justify-between gap-3 text-xs mb-1">
                 <div className="flex items-center space-x-2 text-gray-400">
-                  <Mail size={14} className="text-[#c5a880]" />
+                  <Mail size={14} className="text-[#818cf8]" />
                   <span className="uppercase tracking-wider font-semibold text-[10px]">Admin Email</span>
                 </div>
-                {!isEditingEmail && (
-                  <button
-                    onClick={() => {
-                      setEmailInput(adminEmail.toLowerCase().trim());
-                      setIsEditingEmail(true);
-                    }}
-                    className="text-[11px] text-[#c5a880] hover:underline"
-                  >
-                    Change Email
-                  </button>
-                )}
               </div>
 
-              {isEditingEmail ? (
-                <form onSubmit={handleSaveEmail} className="flex items-center gap-2 mt-2">
-                  <input
-                    type="email"
-                    required
-                    value={emailInput}
-                    // Automatically convert input to lowercase
-                    onChange={(e) => setEmailInput(e.target.value.toLowerCase().trim())}
-                    placeholder="admin@timeora.com"
-                    className="bg-[#0f0f15] border border-[#3a3a4e] rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-[#c5a880] font-mono lowercase"
-                  />
-                  <button
-                    type="submit"
-                    className="px-2.5 py-1 bg-[#c5a880] text-black text-xs font-bold rounded hover:bg-[#d8be98]"
-                    title="Save Email"
-                  >
-                    <Check size={14} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsEditingEmail(false)}
-                    className="px-2.5 py-1 bg-[#22222f] text-gray-300 text-xs rounded hover:bg-white/10"
-                    title="Cancel"
-                  >
-                    <X size={14} />
-                  </button>
-                </form>
-              ) : (
-                <div className="flex items-center space-x-2 mt-1">
-                  {/* Display admin email strictly in lowercase */}
-                  <span className="font-mono text-sm font-semibold text-white tracking-wide lowercase select-all">
-                    {adminEmail.toLowerCase().trim()}
-                  </span>
-                  <span className="text-[9px] bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 px-1.5 py-0.5 rounded uppercase font-bold">
-                    Active
-                  </span>
-                </div>
-              )}
-
-              {emailSuccessMsg && (
-                <span className="text-[10px] text-emerald-400 mt-1 block">
-                  {emailSuccessMsg}
+              <div className="flex items-center space-x-2 mt-1">
+                {/* Display admin email strictly in lowercase */}
+                <span className="font-mono text-sm font-semibold text-white tracking-wide lowercase select-all">
+                  {adminEmail.toLowerCase().trim()}
                 </span>
-              )}
+                <span className="text-[9px] bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 px-1.5 py-0.5 rounded uppercase font-bold">
+                  Active
+                </span>
+              </div>
             </div>
 
           </div>
 
           {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-[#20202c]">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6" style={{ borderTop: '1px solid #1e3048' }}>
             <div 
               onClick={() => setStatusFilter('all')}
               className={`p-3 rounded-xl border cursor-pointer transition-all ${
                 statusFilter === 'all' 
-                  ? 'bg-[#1c1c28] border-[#c5a880]' 
-                  : 'bg-[#14141c] border-[#22222d] hover:border-gray-600'
+                  ? 'border-[#818cf8]' 
+                  : 'hover:border-gray-600'
               }`}
+              style={{ backgroundColor: statusFilter === 'all' ? '#1a2332' : '#0f172a', borderColor: statusFilter === 'all' ? '#818cf8' : '#1e3048' }}
             >
               <span className="text-[10px] uppercase tracking-wider text-gray-400 block font-medium">Total Timepieces</span>
               <span className="text-xl font-bold text-white font-['Cinzel']">{totalCount}</span>
@@ -606,9 +547,10 @@ const Admin = () => {
               onClick={() => setStatusFilter('available')}
               className={`p-3 rounded-xl border cursor-pointer transition-all ${
                 statusFilter === 'available' 
-                  ? 'bg-[#1c1c28] border-emerald-500' 
-                  : 'bg-[#14141c] border-[#22222d] hover:border-gray-600'
+                  ? 'border-emerald-500' 
+                  : 'hover:border-gray-600'
               }`}
+              style={{ backgroundColor: statusFilter === 'available' ? '#1a2332' : '#0f172a', borderColor: statusFilter === 'available' ? '#10b981' : '#1e3048' }}
             >
               <span className="text-[10px] uppercase tracking-wider text-emerald-400 block font-medium">Available</span>
               <span className="text-xl font-bold text-emerald-400 font-['Cinzel']">{availableCount}</span>
@@ -618,9 +560,10 @@ const Admin = () => {
               onClick={() => setStatusFilter('out_of_stock')}
               className={`p-3 rounded-xl border cursor-pointer transition-all ${
                 statusFilter === 'out_of_stock' 
-                  ? 'bg-[#1c1c28] border-red-500' 
-                  : 'bg-[#14141c] border-[#22222d] hover:border-gray-600'
+                  ? 'border-red-500' 
+                  : 'hover:border-gray-600'
               }`}
+              style={{ backgroundColor: statusFilter === 'out_of_stock' ? '#1a2332' : '#0f172a', borderColor: statusFilter === 'out_of_stock' ? '#ef4444' : '#1e3048' }}
             >
               <span className="text-[10px] uppercase tracking-wider text-red-400 block font-medium">Out of Stock</span>
               <span className="text-xl font-bold text-red-400 font-['Cinzel']">{outOfStockCount}</span>
@@ -630,18 +573,19 @@ const Admin = () => {
               onClick={() => setStatusFilter('on_offer')}
               className={`p-3 rounded-xl border cursor-pointer transition-all ${
                 statusFilter === 'on_offer' 
-                  ? 'bg-[#1c1c28] border-[#c5a880]' 
-                  : 'bg-[#14141c] border-[#22222d] hover:border-gray-600'
+                  ? 'border-[#818cf8]' 
+                  : 'hover:border-gray-600'
               }`}
+              style={{ backgroundColor: statusFilter === 'on_offer' ? '#1a2332' : '#0f172a', borderColor: statusFilter === 'on_offer' ? '#818cf8' : '#1e3048' }}
             >
-              <span className="text-[10px] uppercase tracking-wider text-[#c5a880] block font-medium">On Offer</span>
-              <span className="text-xl font-bold text-[#c5a880] font-['Cinzel']">{onOfferCount}</span>
+              <span className="text-[10px] uppercase tracking-wider text-[#818cf8] block font-medium">On Offer</span>
+              <span className="text-xl font-bold text-[#818cf8] font-['Cinzel']">{onOfferCount}</span>
             </div>
           </div>
         </div>
 
         {/* Action Toolbar */}
-        <div className="bg-[#121217] border border-[#22222d] rounded-xl p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="border rounded-xl p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4" style={{ backgroundColor: '#111827', borderColor: '#1e3048' }}>
           
           {/* Search Box */}
           <div className="relative w-full md:w-80">
@@ -651,7 +595,7 @@ const Admin = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name, category, SKU..."
-              className="w-full bg-[#181822] border border-[#2c2c3c] rounded-lg pl-9 pr-8 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#c5a880]"
+              className="w-full border rounded-lg pl-9 pr-8 py-2 text-xs text-white placeholder-gray-500 focus:outline-none" style={{ backgroundColor: '#0c1322', borderColor: '#1e3a5f' }}
             />
             {searchQuery && (
               <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -662,11 +606,11 @@ const Admin = () => {
 
           {/* Filter Pills & Add Button */}
           <div className="flex flex-wrap items-center justify-between w-full md:w-auto gap-3">
-            <div className="flex items-center space-x-1.5 bg-[#171722] p-1 rounded-lg border border-[#262636] text-xs">
+            <div className="flex items-center space-x-1.5 p-1 rounded-lg text-xs" style={{ backgroundColor: '#0f172a', border: '1px solid #1e3a5f' }}>
               <button
                 onClick={() => setStatusFilter('all')}
                 className={`px-3 py-1 rounded font-medium transition-colors ${
-                  statusFilter === 'all' ? 'bg-[#c5a880] text-black font-semibold' : 'text-gray-400 hover:text-white'
+                  statusFilter === 'all' ? 'bg-[#818cf8] text-black font-semibold' : 'text-gray-400 hover:text-white'
                 }`}
               >
                 All
@@ -700,7 +644,7 @@ const Admin = () => {
             {/* "+ New Product" Button */}
             <button
               onClick={handleOpenCreateModal}
-              className="px-4 py-2.5 bg-[#c5a880] hover:bg-[#d8be98] text-black font-bold text-xs uppercase tracking-widest rounded-lg flex items-center space-x-2 transition-all shadow-lg shadow-[#c5a880]/20"
+              className="px-4 py-2.5 bg-[#818cf8] hover:bg-[#a5b4fc] text-black font-bold text-xs uppercase tracking-widest rounded-lg flex items-center space-x-2 transition-all shadow-lg shadow-[#818cf8]/20"
             >
               <Plus size={16} />
               <span>New Product</span>
@@ -710,11 +654,11 @@ const Admin = () => {
         </div>
 
         {/* Product Inventory Table / Cards */}
-        <div className="bg-[#121217] border border-[#22222d] rounded-2xl overflow-hidden shadow-2xl">
+        <div className="border rounded-2xl overflow-hidden shadow-2xl" style={{ backgroundColor: '#111827', borderColor: '#1e3048' }}>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-[#20202c] bg-[#161622] text-gray-400 uppercase tracking-wider text-[10px]">
+                <tr className="border-b text-gray-400 uppercase tracking-wider text-[10px]" style={{ borderColor: '#1e3048', backgroundColor: '#0f172a' }}>
                   <th className="py-3.5 px-4 font-semibold">Timepiece</th>
                   <th className="py-3.5 px-4 font-semibold">Price</th>
                   <th className="py-3.5 px-4 font-semibold">Stock</th>
@@ -722,7 +666,7 @@ const Admin = () => {
                   <th className="py-3.5 px-4 font-semibold text-right">Inventory Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1e1e2a]">
+              <tbody className="divide-y" style={{ borderColor: '#1a2744' }}>
                 {filteredProducts.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="text-center py-12 text-gray-400">
@@ -749,7 +693,7 @@ const Admin = () => {
                               className="w-14 h-14 object-cover rounded-lg bg-[#0c0c10] border border-[#262634] flex-shrink-0"
                             />
                             <div>
-                              <span className="font-mono text-[10px] text-[#c5a880] uppercase tracking-wider block">
+                              <span className="font-mono text-[10px] text-[#818cf8] uppercase tracking-wider block">
                                 REF: {product.sku || product.id}
                               </span>
                               <h3 className="font-['Cinzel'] font-bold text-white text-sm line-clamp-1">
@@ -766,7 +710,7 @@ const Admin = () => {
                         <td className="py-4 px-4 whitespace-nowrap">
                           {isOnOffer ? (
                             <div>
-                              <span className="font-bold text-[#c5a880] text-sm block">
+                              <span className="font-bold text-[#818cf8] text-sm block">
                                 {BRAND_CONFIG.currency}{product.discountPrice.toLocaleString()}
                               </span>
                               <span className="text-[11px] text-gray-500 line-through block">
@@ -841,7 +785,7 @@ const Admin = () => {
                               }`}
                               title="Set or Adjust Offer"
                             >
-                              <Tag size={14} className={isOnOffer ? 'text-amber-400' : 'text-[#c5a880]'} />
+                              <Tag size={14} className={isOnOffer ? 'text-amber-400' : 'text-[#818cf8]'} />
                               <span className="hidden sm:inline">
                                 {isOnOffer ? "Edit Offer" : "Add Offer"}
                               </span>
@@ -850,7 +794,7 @@ const Admin = () => {
                             {/* Edit Button */}
                             <button
                               onClick={() => handleOpenEditModal(product)}
-                              className="p-2 rounded-lg bg-[#1a1a24] hover:bg-[#252533] border border-[#2e2e3e] text-gray-300 hover:text-[#c5a880] transition-colors"
+                              className="p-2 rounded-lg bg-[#1a1a24] hover:bg-[#252533] border border-[#2e2e3e] text-gray-300 hover:text-[#818cf8] transition-colors"
                               title="Edit Timepiece"
                             >
                               <Edit3 size={14} />
@@ -889,7 +833,7 @@ const Admin = () => {
             onClick={() => setIsProductModalOpen(false)}
           />
 
-          <div className="relative bg-[#13131a] border border-[#2e2e40] rounded-2xl max-w-2xl w-full p-6 sm:p-8 z-10 shadow-2xl my-8 overflow-y-auto max-h-[90vh]">
+          <div className="relative border rounded-2xl max-w-2xl w-full p-6 sm:p-8 z-10 shadow-2xl my-8 overflow-y-auto max-h-[90vh]" style={{ backgroundColor: '#111827', borderColor: '#1e3048' }}>
             <div className="flex items-center justify-between pb-4 border-b border-[#222232] mb-6">
               <div>
                 <h2 className="font-['Cinzel'] font-bold text-xl text-white">
@@ -920,7 +864,7 @@ const Admin = () => {
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                   placeholder="e.g. TIMEORA Grand Complication Rose"
-                  className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#c5a880]"
+                  className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#818cf8]"
                 />
               </div>
 
@@ -938,7 +882,7 @@ const Admin = () => {
                     value={formData.price}
                     onChange={(e) => setFormData({...formData, price: e.target.value})}
                     placeholder="1850"
-                    className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#c5a880] font-mono"
+                    className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#818cf8] font-mono"
                   />
                 </div>
 
@@ -953,7 +897,7 @@ const Admin = () => {
                     value={formData.stock}
                     onChange={(e) => setFormData({...formData, stock: e.target.value})}
                     placeholder="10"
-                    className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#c5a880] font-mono"
+                    className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#818cf8] font-mono"
                   />
                 </div>
 
@@ -967,7 +911,7 @@ const Admin = () => {
                     value={formData.discountPrice}
                     onChange={(e) => setFormData({...formData, discountPrice: e.target.value})}
                     placeholder="e.g. 1550"
-                    className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#c5a880] font-mono"
+                    className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#818cf8] font-mono"
                   />
                 </div>
               </div>
@@ -981,7 +925,7 @@ const Admin = () => {
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
-                    className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#c5a880] cursor-pointer"
+                    className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#818cf8] cursor-pointer"
                   >
                     <option value="Chronograph">Chronograph</option>
                     <option value="Dress">Dress</option>
@@ -1001,7 +945,7 @@ const Admin = () => {
                   <select
                     value={formData.gender}
                     onChange={(e) => setFormData({...formData, gender: e.target.value})}
-                    className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#c5a880] cursor-pointer"
+                    className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#818cf8] cursor-pointer"
                   >
                     <option value="Men">Men</option>
                     <option value="Women">Women</option>
@@ -1015,7 +959,7 @@ const Admin = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-sm font-semibold text-white uppercase tracking-wider font-['Cinzel'] flex items-center space-x-2">
-                      <ImageIcon size={16} className="text-[#c5a880]" />
+                      <ImageIcon size={16} className="text-[#818cf8]" />
                       <span>Product Media Showcase</span>
                     </h3>
                     <p className="text-[11px] text-gray-400 mt-0.5">
@@ -1025,7 +969,7 @@ const Admin = () => {
                   <button
                     type="button"
                     onClick={() => setShowUrlOption(!showUrlOption)}
-                    className="text-[11px] text-[#c5a880] hover:underline flex items-center space-x-1"
+                    className="text-[11px] text-[#818cf8] hover:underline flex items-center space-x-1"
                   >
                     <span>{showUrlOption ? "Hide URL Options" : "Add Image URL / Presets"}</span>
                   </button>
@@ -1108,7 +1052,7 @@ const Admin = () => {
 
                         {/* Primary Badge for index 0 */}
                         {idx === 0 ? (
-                          <div className="absolute top-2 left-2 bg-[#c5a880] text-black text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded shadow z-10 flex items-center space-x-1">
+                          <div className="absolute top-2 left-2 bg-[#818cf8] text-black text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded shadow z-10 flex items-center space-x-1">
                             <Star size={10} fill="currentColor" />
                             <span>Primary</span>
                           </div>
@@ -1116,7 +1060,7 @@ const Admin = () => {
                           <button
                             type="button"
                             onClick={() => handleSetPrimaryImage(idx)}
-                            className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 hover:bg-[#c5a880] text-white hover:text-black text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded backdrop-blur border border-white/10 z-10"
+                            className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 hover:bg-[#818cf8] text-white hover:text-black text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded backdrop-blur border border-white/10 z-10"
                             title="Set as Main Primary Image"
                           >
                             Make Primary
@@ -1134,7 +1078,7 @@ const Admin = () => {
                             className="p-2 bg-[#252536] hover:bg-[#34344c] text-white rounded-lg transition-colors border border-[#3e3e56]"
                             title="Replace this image"
                           >
-                            <Upload size={14} className="text-[#c5a880]" />
+                            <Upload size={14} className="text-[#818cf8]" />
                           </button>
                           <button
                             type="button"
@@ -1162,22 +1106,22 @@ const Admin = () => {
                         onClick={() => imagesInputRef.current?.click()}
                         className={`aspect-square border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
                           dragImagesActive 
-                            ? 'border-[#c5a880] bg-[#c5a880]/10' 
-                            : 'border-[#2c2c3e] hover:border-[#c5a880]/60 bg-[#14141d]'
+                            ? 'border-[#818cf8] bg-[#818cf8]/10' 
+                            : 'border-[#2c2c3e] hover:border-[#818cf8]/60 bg-[#14141d]'
                         }`}
                       >
                         {uploadingMedia ? (
                           <div className="flex flex-col items-center space-y-1">
-                            <RefreshCw size={20} className="text-[#c5a880] animate-spin" />
+                            <RefreshCw size={20} className="text-[#818cf8] animate-spin" />
                             <span className="text-[10px] text-gray-300">Processing...</span>
                           </div>
                         ) : (
                           <div className="flex flex-col items-center space-y-1.5">
-                            <div className="w-8 h-8 rounded-full bg-[#1f1f2e] flex items-center justify-center text-[#c5a880]">
+                            <div className="w-8 h-8 rounded-full bg-[#1f1f2e] flex items-center justify-center text-[#818cf8]">
                               <Plus size={18} />
                             </div>
                             <div>
-                              <span className="text-xs font-bold text-[#c5a880] block">Add Image</span>
+                              <span className="text-xs font-bold text-[#818cf8] block">Add Image</span>
                               <span className="text-[9px] text-gray-400 block mt-0.5">JPG, PNG, WebP</span>
                             </div>
                           </div>
@@ -1200,12 +1144,12 @@ const Admin = () => {
                           value={manualUrlInput}
                           onChange={(e) => setManualUrlInput(e.target.value)}
                           placeholder="https://images.unsplash.com/..."
-                          className="flex-1 bg-[#181824] border border-[#2c2c3e] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#c5a880]"
+                          className="flex-1 bg-[#181824] border border-[#2c2c3e] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#818cf8]"
                         />
                         <button
                           type="button"
                           onClick={handleAddManualUrlImage}
-                          className="px-3 py-1.5 bg-[#c5a880] text-black text-xs font-bold rounded-lg hover:bg-[#d8be98]"
+                          className="px-3 py-1.5 bg-[#818cf8] text-black text-xs font-bold rounded-lg hover:bg-[#a5b4fc]"
                         >
                           Add
                         </button>
@@ -1229,7 +1173,7 @@ const Admin = () => {
                                 images: [...(prev.images || []), url].slice(0, 6)
                               }));
                             }}
-                            className="w-9 h-9 rounded-lg overflow-hidden border border-white/10 opacity-70 hover:opacity-100 flex-shrink-0 transition-all hover:border-[#c5a880]"
+                            className="w-9 h-9 rounded-lg overflow-hidden border border-white/10 opacity-70 hover:opacity-100 flex-shrink-0 transition-all hover:border-[#818cf8]"
                           >
                             <img src={url} alt="preset" className="w-full h-full object-cover" />
                           </button>
@@ -1242,7 +1186,7 @@ const Admin = () => {
                 {/* 2. PRODUCT VIDEO (Optional, Max 1) */}
                 <div className="pt-3 border-t border-[#222232]">
                   <label className="block text-gray-300 uppercase tracking-wider text-xs font-semibold mb-2 flex items-center space-x-1.5">
-                    <Video size={14} className="text-[#c5a880]" />
+                    <Video size={14} className="text-[#818cf8]" />
                     <span>Product Video (Optional - Max 1)</span>
                   </label>
 
@@ -1258,7 +1202,7 @@ const Admin = () => {
                       </div>
                       <div className="flex flex-col flex-1">
                         <span className="text-xs font-semibold text-white flex items-center space-x-1.5">
-                          <Film size={14} className="text-[#c5a880]" />
+                          <Film size={14} className="text-[#818cf8]" />
                           <span>Showcase Video Ready</span>
                         </span>
                         <span className="text-[10px] text-gray-400 max-w-[200px] truncate mt-1">
@@ -1271,7 +1215,7 @@ const Admin = () => {
                           onClick={() => videoInputRef.current?.click()}
                           className="px-3 py-2 bg-[#252536] hover:bg-[#34344a] text-white rounded-lg text-xs font-medium flex items-center space-x-1 transition-colors border border-[#36364e]"
                         >
-                          <Upload size={14} className="text-[#c5a880]" />
+                          <Upload size={14} className="text-[#818cf8]" />
                           <span>Replace</span>
                         </button>
                         <button
@@ -1300,12 +1244,12 @@ const Admin = () => {
                       onClick={() => videoInputRef.current?.click()}
                       className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
                         dragVideoActive 
-                          ? 'border-[#c5a880] bg-[#c5a880]/10' 
-                          : 'border-[#2c2c3e] hover:border-[#c5a880]/50 bg-[#14141d]'
+                          ? 'border-[#818cf8] bg-[#818cf8]/10' 
+                          : 'border-[#2c2c3e] hover:border-[#818cf8]/50 bg-[#14141d]'
                       }`}
                     >
                       <div className="flex flex-col items-center justify-center space-y-1.5">
-                        <div className="w-9 h-9 rounded-full bg-[#1e1e2c] border border-[#323246] flex items-center justify-center text-[#c5a880]">
+                        <div className="w-9 h-9 rounded-full bg-[#1e1e2c] border border-[#323246] flex items-center justify-center text-[#818cf8]">
                           <Video size={18} />
                         </div>
                         <div>
@@ -1329,7 +1273,7 @@ const Admin = () => {
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                   placeholder="Detailed horological description including materials, movement, sapphire crystal..."
-                  className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#c5a880]"
+                  className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#818cf8]"
                 />
               </div>
 
@@ -1344,7 +1288,7 @@ const Admin = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-[#c5a880] hover:bg-[#d8be98] text-black text-xs font-bold uppercase tracking-widest rounded-lg transition-all shadow-lg"
+                  className="px-6 py-2.5 bg-[#818cf8] hover:bg-[#a5b4fc] text-black text-xs font-bold uppercase tracking-widest rounded-lg transition-all shadow-lg"
                 >
                   {modalMode === 'create' ? 'Publish Timepiece' : 'Save Changes'}
                 </button>
@@ -1365,9 +1309,9 @@ const Admin = () => {
             onClick={() => setIsOfferModalOpen(false)}
           />
 
-          <div className="relative bg-[#13131a] border border-[#2e2e40] rounded-2xl max-w-md w-full p-6 sm:p-8 z-10 shadow-2xl">
+          <div className="relative border rounded-2xl max-w-md w-full p-6 sm:p-8 z-10 shadow-2xl" style={{ backgroundColor: '#111827', borderColor: '#1e3048' }}>
             <div className="flex items-center justify-between pb-4 border-b border-[#222232] mb-6">
-              <div className="flex items-center space-x-2 text-[#c5a880]">
+              <div className="flex items-center space-x-2 text-[#818cf8]">
                 <Tag size={18} />
                 <h2 className="font-['Cinzel'] font-bold text-lg text-white">
                   Configure Special Offer
@@ -1410,7 +1354,7 @@ const Admin = () => {
                       onClick={() => handlePercentChange(pct)}
                       className={`flex-1 py-1.5 rounded-lg border font-bold text-xs transition-colors ${
                         Number(offerPercentInput) === pct 
-                          ? 'bg-[#c5a880] text-black border-[#c5a880]' 
+                          ? 'bg-[#818cf8] text-black border-[#818cf8]' 
                           : 'bg-[#181822] text-gray-300 border-[#2b2b3b] hover:border-gray-500'
                       }`}
                     >
@@ -1432,7 +1376,7 @@ const Admin = () => {
                   max={selectedProductForOffer.price - 1}
                   value={offerPriceInput}
                   onChange={(e) => setOfferPriceInput(e.target.value)}
-                  className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white text-sm font-bold font-mono focus:outline-none focus:border-[#c5a880]"
+                  className="w-full bg-[#181824] border border-[#2c2c3e] rounded-xl px-3.5 py-2.5 text-white text-sm font-bold font-mono focus:outline-none focus:border-[#818cf8]"
                 />
                 {offerPriceInput && (
                   <span className="text-[11px] text-emerald-400 mt-1 block">
@@ -1465,7 +1409,7 @@ const Admin = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 bg-[#c5a880] hover:bg-[#d8be98] text-black font-bold text-xs uppercase tracking-wider rounded-lg"
+                    className="px-5 py-2 bg-[#818cf8] hover:bg-[#a5b4fc] text-black font-bold text-xs uppercase tracking-wider rounded-lg"
                   >
                     Apply Offer
                   </button>
@@ -1487,7 +1431,7 @@ const Admin = () => {
             onClick={() => setProductToDelete(null)}
           />
 
-          <div className="relative bg-[#13131a] border border-[#2e2e40] rounded-2xl max-w-sm w-full p-6 z-10 shadow-2xl text-center space-y-4">
+          <div className="relative border rounded-2xl max-w-sm w-full p-6 z-10 shadow-2xl text-center space-y-4" style={{ backgroundColor: '#111827', borderColor: '#1e3048' }}>
             <div className="w-14 h-14 rounded-full bg-red-950/60 border border-red-800 mx-auto flex items-center justify-center text-red-400">
               <Trash2 size={24} />
             </div>

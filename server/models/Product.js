@@ -4,110 +4,149 @@ const productSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Please provide product name'],
-    trim: true
+    trim: true,
   },
   brand: {
     type: String,
-    default: 'TIMEORA'
+    default: 'TIMEORA',
   },
   tagline: {
     type: String,
-    trim: true
+    trim: true,
   },
   description: {
     type: String,
-    required: [true, 'Please provide description']
+    required: [true, 'Please provide description'],
   },
   price: {
     type: Number,
     required: [true, 'Please provide price'],
-    min: 0
+    min: 0,
   },
   discountPrice: {
     type: Number,
-    min: 0
+    min: 0,
   },
   category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    required: true,
+  },
+  categoryName: {
     type: String,
-    required: [true, 'Please provide category'],
-    enum: ['Chronograph', 'Dress', 'Diver', 'Complication', 'Skeleton', 'Minimalist', 'Vintage', 'Haute Horlogerie']
+    default: '',
   },
   gender: {
     type: String,
     required: [true, 'Please provide target gender'],
-    enum: ['Men', 'Women', 'Unisex']
+    enum: ['Men', 'Women', 'Unisex'],
   },
   stock: {
     type: Number,
     required: [true, 'Please provide stock count'],
     default: 10,
-    min: 0
+    min: 0,
+  },
+  lowStockThreshold: {
+    type: Number,
+    default: 5,
+    min: 0,
   },
   sku: {
     type: String,
     required: [true, 'Please provide SKU'],
     unique: true,
-    trim: true
+    trim: true,
   },
   images: [{
     type: String,
-    required: true
+    required: true,
   }],
   video: {
     type: String,
-    default: ''
+    default: '',
   },
   colors: [{
-    type: String
+    type: String,
   }],
   strapMaterial: {
     type: String,
-    default: 'Italian Genuine Alligator Leather'
+    default: 'Italian Genuine Alligator Leather',
   },
   caseMaterial: {
     type: String,
-    default: '316L Stainless Steel'
+    default: '316L Stainless Steel',
   },
   dialColor: {
     type: String,
-    default: 'Sunburst Black'
+    default: 'Sunburst Black',
   },
   movement: {
     type: String,
-    default: 'Calibre TM Automatic (28,800 vph)'
+    default: 'Calibre TM Automatic (28,800 vph)',
   },
   waterResistance: {
     type: String,
-    default: '100M / 10 ATM'
+    default: '100M / 10 ATM',
   },
   warranty: {
     type: String,
-    default: '5-Year International Manufacturer Warranty'
+    default: '5-Year International Manufacturer Warranty',
   },
   featured: {
     type: Boolean,
-    default: false
+    default: false,
   },
   bestSeller: {
     type: Boolean,
-    default: false
+    default: false,
   },
   newArrival: {
     type: Boolean,
-    default: false
+    default: false,
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
   },
   rating: {
     type: Number,
     default: 5.0,
     min: 0,
-    max: 5
+    max: 5,
   },
   reviewsCount: {
     type: Number,
-    default: 0
-  }
+    default: 0,
+  },
+  specifications: {
+    type: Map,
+    of: { type: String },
+    default: {},
+  },
 }, {
-  timestamps: true
+  timestamps: true,
 });
+
+productSchema.index({ sku: 1 }, { unique: true });
+productSchema.index({ name: 'text', description: 'text' });
+productSchema.index({ category: 1 });
+productSchema.index({ price: 1 });
+productSchema.index({ featured: 1, createdAt: -1 });
+productSchema.index({ isActive: 1 });
+
+productSchema.virtual('effectivePrice').get(function () {
+  return this.discountPrice && this.discountPrice < this.price ? this.discountPrice : this.price;
+});
+
+productSchema.virtual('discountPercent').get(function () {
+  if (this.discountPrice && this.discountPrice < this.price) {
+    return Math.round(((this.price - this.discountPrice) / this.price) * 100);
+  }
+  return 0;
+});
+
+productSchema.set('toObject', { virtuals: true });
+productSchema.set('toJSON', { virtuals: true });
 
 module.exports = mongoose.model('Product', productSchema);

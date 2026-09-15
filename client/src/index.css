@@ -4,13 +4,29 @@
   :root {
     --color-primary: #0a0a0a;
     --color-secondary: #141414;
-    --color-accent: #c5a880; /* Rich champagne gold */
-    --color-accent-light: #e6d5be;
-    --color-accent-dark: #9a7b4f;
+    --color-accent: #2dd4bf;
+    --color-accent-light: #5eead4;
+    --color-accent-dark: #14b8a6;
     --color-surface: #1e1e1e;
     --color-border: #2a2a2a;
     --color-text-main: #f5f5f7;
     --color-text-muted: #a1a1aa;
+
+    --admin-accent: #818cf8;
+    --admin-accent-light: #a5b4fc;
+    --admin-accent-dark: #6366f1;
+    --admin-bg: #0b0f1a;
+    --admin-surface: #111827;
+    --admin-card: #1a2332;
+    --admin-border: #1e3048;
+
+    --user-accent: #2dd4bf;
+    --user-accent-light: #5eead4;
+    --user-accent-dark: #14b8a6;
+    --user-bg: #080c0b;
+    --user-surface: #0f1715;
+    --user-card: #141f1c;
+    --user-border: #1a2e28;
   }
 
   body {
@@ -33,7 +49,7 @@
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #c5a880;
+    background: #2dd4bf;
   }
 }
 
@@ -42,27 +58,27 @@
   background: rgba(18, 18, 22, 0.75);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(197, 168, 128, 0.15);
+  border: 1px solid rgba(45, 212, 191, 0.15);
 }
 
 .luxury-card {
-  background: linear-gradient(180deg, rgba(26, 26, 32, 0.8) 0%, rgba(15, 15, 18, 0.95) 100%);
+  background: linear-gradient(180deg, rgba(20, 31, 28, 0.8) 0%, rgba(12, 18, 16, 0.95) 100%);
   border: 1px solid rgba(255, 255, 255, 0.07);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .luxury-card:hover {
-  border-color: rgba(197, 168, 128, 0.4);
+  border-color: rgba(45, 212, 191, 0.4);
   transform: translateY(-4px);
-  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.6), 0 0 20px -4px rgba(197, 168, 128, 0.15);
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.6), 0 0 20px -4px rgba(45, 212, 191, 0.15);
 }
 
 .gold-gradient-text {
-  background: linear-gradient(135deg, #f7e7ce 0%, #c5a880 50%, #9a7b4f 100%);
+  background: linear-gradient(135deg, #5eead4 0%, #2dd4bf 50%, #14b8a6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .gold-border-gradient {
-  border-image: linear-gradient(135deg, #c5a880, #53422d) 1;
+  border-image: linear-gradient(135deg, #2dd4bf, #0d5e53) 1;
 }

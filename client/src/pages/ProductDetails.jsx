@@ -83,11 +83,11 @@ const ProductDetails = () => {
         
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-xs text-gray-400 mb-8 uppercase tracking-widest">
-          <Link to="/" className="hover:text-[#c5a880] transition-colors">Home</Link>
+          <Link to="/home" className="hover:text-[#2dd4bf] transition-colors">Home</Link>
           <ChevronRight size={12} />
-          <Link to="/watches" className="hover:text-[#c5a880] transition-colors">Watches</Link>
+          <Link to="/watches" className="hover:text-[#2dd4bf] transition-colors">Watches</Link>
           <ChevronRight size={12} />
-          <span className="text-[#c5a880] truncate">{product.name}</span>
+          <span className="text-[#2dd4bf] truncate">{product.name}</span>
         </nav>
 
         {/* Main Product Showcase Section */}
@@ -130,14 +130,14 @@ const ProductDetails = () => {
                   onClick={() => setActiveMedia({ type: 'image', index: idx })}
                   className={`w-20 h-20 rounded-xl overflow-hidden bg-[#161620] border-2 flex-shrink-0 transition-all relative ${
                     activeMedia.type === 'image' && activeMedia.index === idx
-                      ? 'border-[#c5a880] shadow-lg shadow-[#c5a880]/20 scale-105'
+                      ? 'border-[#2dd4bf] shadow-lg shadow-[#2dd4bf]/20 scale-105'
                       : 'border-[#262634] opacity-60 hover:opacity-100'
                   }`}
                   title={idx === 0 ? "Primary Product Image" : `View Image ${idx + 1}`}
                 >
                   <img src={img} alt={`thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
                   {idx === 0 && (
-                    <span className="absolute bottom-1 left-1 right-1 bg-black/80 text-[#c5a880] text-[8px] font-bold uppercase text-center rounded py-0.5 border border-[#c5a880]/30">
+                    <span className="absolute bottom-1 left-1 right-1 bg-black/80 text-[#2dd4bf] text-[8px] font-bold uppercase text-center rounded py-0.5 border border-[#2dd4bf]/30">
                       Main
                     </span>
                   )}
@@ -150,12 +150,12 @@ const ProductDetails = () => {
                   onClick={() => setActiveMedia({ type: 'video' })}
                   className={`w-20 h-20 rounded-xl overflow-hidden bg-[#181826] border-2 flex-shrink-0 transition-all relative flex flex-col items-center justify-center group ${
                     activeMedia.type === 'video'
-                      ? 'border-[#c5a880] shadow-lg shadow-[#c5a880]/30 scale-105 bg-[#202034]'
+                      ? 'border-[#2dd4bf] shadow-lg shadow-[#2dd4bf]/30 scale-105 bg-[#202034]'
                       : 'border-[#2e2e42] opacity-75 hover:opacity-100'
                   }`}
                   title="Watch Product Video Showcase"
                 >
-                  <div className="w-9 h-9 rounded-full bg-[#c5a880] text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <div className="w-9 h-9 rounded-full bg-[#2dd4bf] text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <Play size={16} fill="currentColor" className="ml-0.5" />
                   </div>
                   <span className="text-[9px] font-bold text-white uppercase tracking-wider mt-1">
@@ -172,7 +172,7 @@ const ProductDetails = () => {
               {/* Category, Gender, SKU */}
               <div className="flex items-center justify-between text-xs uppercase tracking-widest text-gray-400 mb-3 pb-3 border-b border-[#1f1f2a]">
                 <div className="flex items-center space-x-2">
-                  <span className="text-[#c5a880] font-semibold">{product.category}</span>
+                  <span className="text-[#2dd4bf] font-semibold">{product.category}</span>
                   <span>•</span>
                   <span>{product.gender}</span>
                 </div>
@@ -185,13 +185,13 @@ const ProductDetails = () => {
               </h1>
 
               {/* Tagline */}
-              <p className="text-sm text-[#c5a880] tracking-wide mb-4 font-light">
+              <p className="text-sm text-[#2dd4bf] tracking-wide mb-4 font-light">
                 {product.tagline}
               </p>
 
               {/* Reviews & Rating */}
               <div className="flex items-center space-x-3 mb-6">
-                <div className="flex items-center text-[#c5a880]">
+                <div className="flex items-center text-[#2dd4bf]">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} size={15} fill="currentColor" />
                   ))}
@@ -252,7 +252,7 @@ const ProductDetails = () => {
               {product.colors && (
                 <div className="mb-8">
                   <label className="block text-xs uppercase tracking-wider text-gray-300 font-semibold mb-3">
-                    Dial & Finish: <span className="text-[#c5a880]">{selectedColor}</span>
+                    Dial & Finish: <span className="text-[#2dd4bf]">{selectedColor}</span>
                   </label>
                   <div className="flex flex-wrap gap-2.5">
                     {product.colors.map(color => (
@@ -261,7 +261,7 @@ const ProductDetails = () => {
                         onClick={() => setSelectedColor(color)}
                         className={`text-xs px-4 py-2 rounded-lg border transition-all ${
                           selectedColor === color
-                            ? 'bg-[#c5a880] text-black border-[#c5a880] font-semibold shadow-md'
+                            ? 'bg-[#2dd4bf] text-black border-[#2dd4bf] font-semibold shadow-md'
                             : 'bg-[#161620] text-gray-300 border-[#2b2b3b] hover:border-gray-500'
                         }`}
                       >
@@ -303,7 +303,7 @@ const ProductDetails = () => {
                         ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700/60'
                         : added
                         ? 'bg-emerald-600 text-white shadow-lg'
-                        : 'bg-[#c5a880] hover:bg-[#d8be98] text-black shadow-xl shadow-[#c5a880]/20'
+                        : 'bg-[#2dd4bf] hover:bg-[#5eead4] text-black shadow-xl shadow-[#2dd4bf]/20'
                     }`}
                   >
                     {isOutOfStock ? (
@@ -326,8 +326,8 @@ const ProductDetails = () => {
                     onClick={() => toggleWishlist(product)}
                     className={`w-14 h-14 rounded-xl border flex items-center justify-center transition-all ${
                       isFavorited
-                        ? 'bg-[#c5a880] text-black border-[#c5a880]'
-                        : 'bg-[#14141c] text-gray-400 border-[#2c2c3b] hover:text-[#c5a880] hover:border-[#c5a880]'
+                        ? 'bg-[#2dd4bf] text-black border-[#2dd4bf]'
+                        : 'bg-[#14141c] text-gray-400 border-[#2c2c3b] hover:text-[#2dd4bf] hover:border-[#2dd4bf]'
                     }`}
                     title={isFavorited ? "Remove from Wishlist" : "Add to Wishlist"}
                   >
@@ -337,14 +337,14 @@ const ProductDetails = () => {
 
                 {/* Direct Concierge & Share */}
                 <div className="flex items-center justify-between pt-2 text-xs text-gray-400">
-                  <Link to="/contact" className="hover:text-[#c5a880] flex items-center space-x-1.5 transition-colors">
+                  <Link to="/contact" className="hover:text-[#2dd4bf] flex items-center space-x-1.5 transition-colors">
                     <MessageSquare size={14} />
                     <span>Inquire with Private Concierge</span>
                   </Link>
 
                   <button 
                     onClick={handleShare}
-                    className="hover:text-[#c5a880] flex items-center space-x-1.5 transition-colors"
+                    className="hover:text-[#2dd4bf] flex items-center space-x-1.5 transition-colors"
                   >
                     <Share2 size={14} />
                     <span>{copiedLink ? "Link Copied!" : "Share Timepiece"}</span>
@@ -355,17 +355,17 @@ const ProductDetails = () => {
               {/* Guarantees Strip */}
               <div className="grid grid-cols-3 gap-3 pt-8 border-t border-[#1f1f2a] mt-8 text-center">
                 <div className="p-3 bg-[#13131a] rounded-xl border border-[#20202a]">
-                  <Truck size={18} className="text-[#c5a880] mx-auto mb-1.5" />
+                  <Truck size={18} className="text-[#2dd4bf] mx-auto mb-1.5" />
                   <span className="text-[11px] font-semibold text-gray-200 block">Insured Global Delivery</span>
                   <span className="text-[9px] text-gray-500">2-4 Business Days</span>
                 </div>
                 <div className="p-3 bg-[#13131a] rounded-xl border border-[#20202a]">
-                  <ShieldCheck size={18} className="text-[#c5a880] mx-auto mb-1.5" />
+                  <ShieldCheck size={18} className="text-[#2dd4bf] mx-auto mb-1.5" />
                   <span className="text-[11px] font-semibold text-gray-200 block">5-Year Warranty</span>
                   <span className="text-[9px] text-gray-500">International Coverage</span>
                 </div>
                 <div className="p-3 bg-[#13131a] rounded-xl border border-[#20202a]">
-                  <RefreshCw size={18} className="text-[#c5a880] mx-auto mb-1.5" />
+                  <RefreshCw size={18} className="text-[#2dd4bf] mx-auto mb-1.5" />
                   <span className="text-[11px] font-semibold text-gray-200 block">30-Day Returns</span>
                   <span className="text-[9px] text-gray-500">Complimentary Courier</span>
                 </div>
@@ -383,39 +383,39 @@ const ProductDetails = () => {
               onClick={() => setActiveTab('specs')}
               className={`pb-4 text-xs font-semibold uppercase tracking-[0.2em] transition-all relative ${
                 activeTab === 'specs'
-                  ? 'text-[#c5a880] font-bold'
+                  ? 'text-[#2dd4bf] font-bold'
                   : 'text-gray-400 hover:text-white'
               }`}
             >
               Horological Specifications
               {activeTab === 'specs' && (
-                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#c5a880]" />
+                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#2dd4bf]" />
               )}
             </button>
             <button
               onClick={() => setActiveTab('craftsmanship')}
               className={`pb-4 text-xs font-semibold uppercase tracking-[0.2em] transition-all relative ${
                 activeTab === 'craftsmanship'
-                  ? 'text-[#c5a880] font-bold'
+                  ? 'text-[#2dd4bf] font-bold'
                   : 'text-gray-400 hover:text-white'
               }`}
             >
               Artisanal Craftsmanship
               {activeTab === 'craftsmanship' && (
-                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#c5a880]" />
+                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#2dd4bf]" />
               )}
             </button>
             <button
               onClick={() => setActiveTab('shipping')}
               className={`pb-4 text-xs font-semibold uppercase tracking-[0.2em] transition-all relative ${
                 activeTab === 'shipping'
-                  ? 'text-[#c5a880] font-bold'
+                  ? 'text-[#2dd4bf] font-bold'
                   : 'text-gray-400 hover:text-white'
               }`}
             >
               Delivery & Warranty
               {activeTab === 'shipping' && (
-                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#c5a880]" />
+                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#2dd4bf]" />
               )}
             </button>
           </div>
@@ -495,14 +495,14 @@ const ProductDetails = () => {
           <div className="mt-24 pt-12 border-t border-[#22222d]">
             <div className="flex justify-between items-end mb-8">
               <div>
-                <span className="text-xs font-semibold text-[#c5a880] uppercase tracking-[0.25em] block mb-1">
+                <span className="text-xs font-semibold text-[#2dd4bf] uppercase tracking-[0.25em] block mb-1">
                   Complementary Models
                 </span>
                 <h3 className="font-['Cinzel'] text-2xl font-bold text-white">
                   You May Also Admire
                 </h3>
               </div>
-              <Link to="/watches" className="text-xs uppercase tracking-widest text-[#c5a880] hover:underline">
+              <Link to="/watches" className="text-xs uppercase tracking-widest text-[#2dd4bf] hover:underline">
                 View All Timepieces
               </Link>
             </div>

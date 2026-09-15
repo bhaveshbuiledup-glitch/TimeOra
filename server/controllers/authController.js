@@ -7,7 +7,7 @@ const generateToken = (id) => {
   });
 };
 
-// @desc    Register a new user / patron
+// @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
 const registerUser = async (req, res) => {
@@ -19,16 +19,20 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Please provide all required fields' });
     }
 
+    // Prevent role manipulation - registration always creates 'user' role
+    const role = 'user';
+
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-      return res.status(400).json({ success: false, message: 'A patron with this email address already exists' });
+      return res.status(400).json({ success: false, message: 'An account with this email address already exists' });
     }
 
     const user = await User.create({
       name,
       email,
       password,
+      role,
     });
 
     if (user) {

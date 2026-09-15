@@ -48,7 +48,7 @@ const ProductCard = ({ product, onQuickView }) => {
 
   return (
     <div 
-      className="group relative bg-[#121217] border border-[#22222a] rounded-xl overflow-hidden flex flex-col transition-all duration-300 hover:border-[#c5a880]/50 hover:shadow-2xl hover:shadow-black/70 hover:-translate-y-1.5"
+      className="group relative bg-[#121217] border border-[#22222a] rounded-xl overflow-hidden flex flex-col transition-all duration-300 hover:border-[#2dd4bf]/50 hover:shadow-2xl hover:shadow-black/70 hover:-translate-y-1.5"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -65,12 +65,12 @@ const ProductCard = ({ product, onQuickView }) => {
           </span>
         )}
         {product.newArrival && !isOutOfStock && (
-          <span className="bg-[#c5a880] text-black text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-sm shadow-md">
+          <span className="bg-[#2dd4bf] text-black text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-sm shadow-md">
             New
           </span>
         )}
         {product.bestSeller && !isOutOfStock && (
-          <span className="bg-[#1f1f27] border border-[#c5a880]/40 text-[#c5a880] text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-sm backdrop-blur-md">
+          <span className="bg-[#1f1f27] border border-[#2dd4bf]/40 text-[#2dd4bf] text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-sm backdrop-blur-md">
             Iconic
           </span>
         )}
@@ -81,8 +81,8 @@ const ProductCard = ({ product, onQuickView }) => {
         onClick={handleFavorite}
         className={`absolute top-3 right-3 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all ${
           isFavorited 
-            ? 'bg-[#c5a880] text-black shadow-lg shadow-[#c5a880]/30' 
-            : 'bg-black/50 backdrop-blur-md text-white hover:text-[#c5a880] hover:bg-black/70 border border-white/10'
+            ? 'bg-[#2dd4bf] text-black shadow-lg shadow-[#2dd4bf]/30' 
+            : 'bg-black/50 backdrop-blur-md text-white hover:text-[#2dd4bf] hover:bg-black/70 border border-white/10'
         }`}
         title={isFavorited ? "Remove from Wishlist" : "Add to Wishlist"}
         aria-label="Wishlist"
@@ -103,7 +103,7 @@ const ProductCard = ({ product, onQuickView }) => {
         <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
           <button
             onClick={handleQuickViewClick}
-            className="flex items-center space-x-2 bg-[#1b1b22] hover:bg-[#c5a880] text-white hover:text-black border border-[#c5a880]/40 px-4 py-2.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-xl"
+            className="flex items-center space-x-2 bg-[#1b1b22] hover:bg-[#2dd4bf] text-white hover:text-black border border-[#2dd4bf]/40 px-4 py-2.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-xl"
           >
             <Eye size={15} />
             <span>Quick View</span>
@@ -121,7 +121,7 @@ const ProductCard = ({ product, onQuickView }) => {
           </div>
 
           {/* Product Name */}
-          <Link to={`/product/${product.id}`} className="block group-hover:text-[#c5a880] transition-colors">
+          <Link to={`/product/${product.id}`} className="block group-hover:text-[#2dd4bf] transition-colors">
             <h3 className="text-white font-medium text-base tracking-wide line-clamp-1 mb-1 font-['Cinzel']">
               {product.name}
             </h3>
@@ -134,7 +134,7 @@ const ProductCard = ({ product, onQuickView }) => {
 
           {/* Rating */}
           <div className="flex items-center space-x-1.5 mb-3 text-xs text-gray-400">
-            <div className="flex items-center text-[#c5a880]">
+            <div className="flex items-center text-[#2dd4bf]">
               <Star size={13} fill="currentColor" />
             </div>
             <span className="font-semibold text-gray-200">{product.rating}</span>
@@ -173,7 +173,7 @@ const ProductCard = ({ product, onQuickView }) => {
                 ? 'bg-[#181820] text-gray-500 border border-[#2a2a35] cursor-not-allowed opacity-50'
                 : addedAnimation
                 ? 'bg-emerald-600 text-white shadow-lg'
-                : 'bg-[#1e1e28] hover:bg-[#c5a880] text-gray-200 hover:text-black border border-[#2a2a38] hover:border-[#c5a880]'
+                : 'bg-[#1e1e28] hover:bg-[#2dd4bf] text-gray-200 hover:text-black border border-[#2a2a38] hover:border-[#2dd4bf]'
             }`}
             title={isOutOfStock ? "Out of Stock" : "Add to Shopping Bag"}
             aria-label={isOutOfStock ? "Out of Stock" : "Add to cart"}

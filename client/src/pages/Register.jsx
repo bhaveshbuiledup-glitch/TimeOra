@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Lock, Mail, User, Watch, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, User, Watch, ArrowRight, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { BRAND_CONFIG } from '../config/brandConfig';
 
@@ -33,7 +33,7 @@ const Register = () => {
     try {
       const res = await register(name, email, password);
       if (res.success) {
-        navigate('/account');
+        navigate('/account', { replace: true });
       } else {
         setError(res.message || 'Unable to register account.');
       }
@@ -51,11 +51,11 @@ const Register = () => {
         <div className="bg-[#121217] border border-[#242432] rounded-2xl p-8 sm:p-10 shadow-2xl relative">
           
           <div className="text-center mb-8">
-            <div className="w-12 h-12 rounded-full border border-[#c5a880]/40 mx-auto flex items-center justify-center text-[#c5a880] mb-3 bg-[#181822]">
+            <div className="w-12 h-12 rounded-full border border-[#2dd4bf]/40 mx-auto flex items-center justify-center text-[#2dd4bf] mb-3 bg-[#181822]">
               <Watch size={24} />
             </div>
             <h1 className="font-['Cinzel'] font-bold text-2xl text-white tracking-wider">
-              Create Patron Account
+              Create User Account
             </h1>
             <p className="text-xs text-gray-400 mt-1">
               Join the distinguished circle of TIMEORA collectors
@@ -81,7 +81,7 @@ const Register = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Lord Alexander Wright"
-                  className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#c5a880]"
+                  className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#2dd4bf]"
                 />
               </div>
             </div>
@@ -98,7 +98,7 @@ const Register = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#c5a880]"
+                  className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#2dd4bf]"
                 />
               </div>
             </div>
@@ -115,7 +115,7 @@ const Register = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Minimum 6 characters"
-                  className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#c5a880]"
+                  className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#2dd4bf]"
                 />
               </div>
             </div>
@@ -132,31 +132,39 @@ const Register = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Re-enter password"
-                  className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#c5a880]"
+                  className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#2dd4bf]"
                 />
               </div>
             </div>
 
             <div className="pt-2 text-[11px] text-gray-400 flex items-start space-x-2">
-              <ShieldCheck size={16} className="text-[#c5a880] flex-shrink-0 mt-0.5" />
+              <ShieldCheck size={16} className="text-[#2dd4bf] flex-shrink-0 mt-0.5" />
               <span>By creating an account, you receive lifetime authentication of timepieces and access to the private collector circle.</span>
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-4 py-3.5 bg-[#c5a880] hover:bg-[#d8be98] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-[#c5a880]/20 disabled:opacity-50"
+              className="w-full mt-4 py-3.5 bg-[#2dd4bf] hover:bg-[#5eead4] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-[#2dd4bf]/20 disabled:opacity-50"
             >
-              <span>{isLoading ? 'Creating Account...' : 'Register as Patron'}</span>
+              <span>{isLoading ? 'Creating Account...' : 'Create Account'}</span>
               <ArrowRight size={16} />
             </button>
           </form>
 
-          <div className="text-center mt-6 text-xs text-gray-400">
-            Already registered?{' '}
-            <Link to="/login" className="text-[#c5a880] font-semibold hover:underline">
-              Sign In Here
-            </Link>
+          <div className="text-center mt-6 text-xs text-gray-400 space-y-2">
+            <div>
+              Already registered?{' '}
+              <Link to="/user-login" className="text-[#2dd4bf] font-semibold hover:underline">
+                Sign In Here
+              </Link>
+            </div>
+            <div>
+              <Link to="/choose" className="text-[#2dd4bf] font-semibold hover:underline inline-flex items-center space-x-1">
+                <ArrowLeft size={12} />
+                <span>Choose a Different Account Type</span>
+              </Link>
+            </div>
           </div>
 
         </div>

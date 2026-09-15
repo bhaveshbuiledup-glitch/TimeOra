@@ -24,7 +24,13 @@ const Navbar = ({ onOpenSearch }) => {
 
   const { totalItemsCount, setIsCartOpen } = useCart();
   const { wishlist } = useWishlist();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isAdmin } = useAuth();
+
+  const isAdminRoute = location.pathname === '/admin';
+
+  const accent = isAdminRoute
+    ? { primary: '#818cf8', hover: '#a5b4fc', dark: '#6366f1', bg: '#111827', border: '#1e3048', pill: '#1e293b' }
+    : { primary: '#2dd4bf', hover: '#5eead4', dark: '#14b8a6', bg: '#0f1715', border: '#1a2e28', pill: '#142420' };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,13 +40,12 @@ const Navbar = ({ onOpenSearch }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location]);
 
   const navLinks = [
-    { name: 'Home', path: '/' },
+    { name: 'Home', path: '/home' },
     { name: 'Watches', path: '/watches' },
     { name: 'Men', path: '/men' },
     { name: 'Women', path: '/women' },
@@ -66,21 +71,31 @@ const Navbar = ({ onOpenSearch }) => {
             <div className="flex items-center space-x-4">
               <button 
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden text-gray-300 hover:text-[#c5a880] p-1.5 focus:outline-none transition-colors"
+                className="lg:hidden p-1.5 focus:outline-none transition-colors"
+                style={{ color: accent.primary }}
                 aria-label="Toggle Navigation"
               >
                 {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
 
-              <Link to="/" className="flex items-center space-x-2 group">
-                <div className="w-8 h-8 rounded-full border border-[#c5a880]/40 flex items-center justify-center bg-[#18181f] group-hover:border-[#c5a880] transition-colors">
-                  <Watch size={18} className="text-[#c5a880]" />
+              <Link to="/home" className="flex items-center space-x-2 group">
+                <div 
+                  className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                  style={{ borderColor: `${accent.primary}40`, backgroundColor: '#18181f', borderWidth: 1 }}
+                >
+                  <Watch size={18} style={{ color: accent.primary }} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-['Cinzel'] tracking-[0.25em] text-xl sm:text-2xl font-bold text-white group-hover:text-[#c5a880] transition-colors">
+                  <span 
+                    className="font-['Cinzel'] tracking-[0.25em] text-xl sm:text-2xl font-bold text-white transition-colors"
+                    style={{ '--tw-text-opacity': 1 }}
+                  >
                     {BRAND_CONFIG.name}
                   </span>
-                  <span className="text-[9px] uppercase tracking-[0.3em] text-[#c5a880] -mt-1 font-medium">
+                  <span 
+                    className="text-[9px] uppercase tracking-[0.3em] -mt-1 font-medium"
+                    style={{ color: accent.primary }}
+                  >
                     Geneve
                   </span>
                 </div>
@@ -95,15 +110,20 @@ const Navbar = ({ onOpenSearch }) => {
                   <Link
                     key={link.name}
                     to={link.path}
-                    className={`text-xs uppercase tracking-[0.2em] font-medium transition-all relative py-1 hover:text-[#c5a880] ${
-                      isActive 
-                        ? 'text-[#c5a880] font-semibold' 
-                        : 'text-gray-300'
-                    }`}
+                    className="text-xs uppercase tracking-[0.2em] font-medium transition-all relative py-1"
+                    style={{ 
+                      color: isActive ? accent.primary : '#d1d5db',
+                      fontWeight: isActive ? 600 : 500
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = accent.primary}
+                    onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.color = '#d1d5db'; }}
                   >
                     {link.name}
                     {isActive && (
-                      <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-[#c5a880] rounded-full animate-pulse" />
+                      <span 
+                        className="absolute bottom-0 left-0 right-0 h-[1.5px] rounded-full animate-pulse"
+                        style={{ backgroundColor: accent.primary }}
+                      />
                     )}
                   </Link>
                 );
@@ -116,7 +136,10 @@ const Navbar = ({ onOpenSearch }) => {
               {/* Search Button */}
               <button 
                 onClick={onOpenSearch}
-                className="text-gray-300 hover:text-[#c5a880] transition-colors p-1"
+                className="p-1 transition-colors"
+                style={{ color: '#d1d5db' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = accent.primary}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#d1d5db'}
                 title="Search Watches"
                 aria-label="Search"
               >
@@ -126,13 +149,19 @@ const Navbar = ({ onOpenSearch }) => {
               {/* Wishlist Button */}
               <Link 
                 to="/wishlist" 
-                className="text-gray-300 hover:text-[#c5a880] transition-colors relative p-1"
+                className="transition-colors relative p-1"
+                style={{ color: '#d1d5db' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = accent.primary}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#d1d5db'}
                 title="Wishlist"
                 aria-label="Wishlist"
               >
                 <Heart size={20} />
                 {wishlist.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#c5a880] text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  <span 
+                    className="absolute -top-1 -right-1 text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: accent.primary }}
+                  >
                     {wishlist.length}
                   </span>
                 )}
@@ -141,13 +170,19 @@ const Navbar = ({ onOpenSearch }) => {
               {/* Cart Button */}
               <button 
                 onClick={() => setIsCartOpen(true)}
-                className="text-gray-300 hover:text-[#c5a880] transition-colors relative p-1"
+                className="transition-colors relative p-1"
+                style={{ color: '#d1d5db' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = accent.primary}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#d1d5db'}
                 title="Shopping Bag"
                 aria-label="Cart"
               >
                 <ShoppingBag size={20} />
                 {totalItemsCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#c5a880] text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-lg shadow-[#c5a880]/30">
+                  <span 
+                    className="absolute -top-1 -right-1 text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: accent.primary, boxShadow: `0 4px 12px ${accent.primary}40` }}
+                  >
                     {totalItemsCount}
                   </span>
                 )}
@@ -155,28 +190,47 @@ const Navbar = ({ onOpenSearch }) => {
 
               {/* Account Link */}
               <Link 
-                to={isAuthenticated ? "/account" : "/login"} 
-                className="text-gray-300 hover:text-[#c5a880] transition-colors p-1 flex items-center space-x-1"
+                to={isAuthenticated ? "/account" : "/choose"} 
+                className="transition-colors p-1 flex items-center space-x-1"
+                style={{ color: '#d1d5db' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = accent.primary}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#d1d5db'}
                 title={isAuthenticated ? `Account (${user?.name})` : "Sign In"}
                 aria-label="User Account"
               >
                 <User size={20} />
                 {isAuthenticated && (
-                  <span className="hidden md:inline text-xs tracking-wider text-[#c5a880] font-medium max-w-[80px] truncate">
+                  <span className="hidden md:inline text-xs tracking-wider font-medium max-w-[80px] truncate" style={{ color: accent.primary }}>
                     {user.name.split(' ')[0]}
                   </span>
                 )}
               </Link>
 
-              {/* Admin Panel Access */}
-              <Link
-                to="/admin"
-                className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-[#181824] border border-[#c5a880]/50 text-[#c5a880] hover:bg-[#c5a880] hover:text-black transition-all text-[11px] font-semibold uppercase tracking-wider shadow-sm"
-                title="Atelier Admin Panel"
-              >
-                <Shield size={12} />
-                <span>Admin</span>
-              </Link>
+              {/* Admin Panel Access - only visible to admin users */}
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="flex items-center space-x-1 px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider shadow-sm transition-all"
+                  style={{ 
+                    backgroundColor: isAdminRoute ? accent.primary : accent.pill,
+                    borderColor: `${accent.primary}50`,
+                    borderWidth: 1,
+                    color: isAdminRoute ? '#000' : accent.primary
+                  }}
+                  onMouseEnter={(e) => { 
+                    e.currentTarget.style.backgroundColor = accent.primary; 
+                    e.currentTarget.style.color = '#000'; 
+                  }}
+                  onMouseLeave={(e) => { 
+                    e.currentTarget.style.backgroundColor = isAdminRoute ? accent.primary : accent.pill; 
+                    e.currentTarget.style.color = isAdminRoute ? '#000' : accent.primary; 
+                  }}
+                  title="Atelier Admin Panel"
+                >
+                  <Shield size={12} />
+                  <span>Admin</span>
+                </Link>
+              )}
             </div>
 
           </div>
@@ -193,11 +247,11 @@ const Navbar = ({ onOpenSearch }) => {
           />
 
           {/* Drawer Content */}
-          <div className="relative w-4/5 max-w-sm bg-[#111116] border-r border-[#2a2a2a] h-full overflow-y-auto p-6 flex flex-col justify-between z-50">
+          <div className="relative w-4/5 max-w-sm h-full overflow-y-auto p-6 flex flex-col justify-between z-50" style={{ backgroundColor: '#111116', borderRight: `1px solid ${accent.border}` }}>
             <div>
-              <div className="flex items-center justify-between pb-6 border-b border-[#22222b]">
+              <div className="flex items-center justify-between pb-6" style={{ borderBottom: `1px solid ${accent.border}` }}>
                 <div className="flex items-center space-x-2">
-                  <Watch size={20} className="text-[#c5a880]" />
+                  <Watch size={20} style={{ color: accent.primary }} />
                   <span className="font-['Cinzel'] tracking-[0.2em] font-bold text-white text-lg">
                     {BRAND_CONFIG.name}
                   </span>
@@ -215,7 +269,9 @@ const Navbar = ({ onOpenSearch }) => {
                   <Link
                     key={link.name}
                     to={link.path}
-                    className="flex items-center justify-between py-2.5 px-3 text-sm uppercase tracking-[0.15em] text-gray-200 hover:text-[#c5a880] hover:bg-white/5 rounded-md transition-all"
+                    className="flex items-center justify-between py-2.5 px-3 text-sm uppercase tracking-[0.15em] text-gray-200 rounded-md transition-all"
+                    onMouseEnter={(e) => { e.currentTarget.style.color = accent.primary; e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = '#e5e7eb'; e.currentTarget.style.backgroundColor = 'transparent'; }}
                   >
                     <span>{link.name}</span>
                     <ChevronRight size={16} className="text-gray-500" />
@@ -224,20 +280,24 @@ const Navbar = ({ onOpenSearch }) => {
               </div>
             </div>
 
-            <div className="pt-6 border-t border-[#22222b] space-y-3">
+            <div className="pt-6 space-y-3" style={{ borderTop: `1px solid ${accent.border}` }}>
               <Link
-                to={isAuthenticated ? "/account" : "/login"}
-                className="w-full block text-center py-2.5 px-4 bg-[#c5a880] text-black font-semibold text-xs tracking-widest uppercase rounded hover:bg-[#d8be98] transition-colors"
+                to={isAuthenticated ? "/account" : "/choose"}
+                className="w-full block text-center py-2.5 px-4 text-black font-semibold text-xs tracking-widest uppercase rounded transition-colors"
+                style={{ backgroundColor: accent.primary }}
               >
                 {isAuthenticated ? "My Account" : "Sign In / Register"}
               </Link>
-              <Link
-                to="/admin"
-                className="w-full flex items-center justify-center space-x-2 py-2.5 px-4 bg-[#181822] border border-[#c5a880]/40 text-[#c5a880] font-semibold text-xs tracking-widest uppercase rounded hover:bg-[#222230] transition-colors"
-              >
-                <Shield size={14} />
-                <span>Admin Panel</span>
-              </Link>
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="w-full flex items-center justify-center space-x-2 py-2.5 px-4 border font-semibold text-xs tracking-widest uppercase rounded transition-colors"
+                  style={{ backgroundColor: accent.pill, borderColor: `${accent.primary}40`, color: accent.primary }}
+                >
+                  <Shield size={14} />
+                  <span>Admin Panel</span>
+                </Link>
+              )}
               <p className="text-center text-xs text-gray-500">
                 {BRAND_CONFIG.tagline}
               </p>
