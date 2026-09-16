@@ -1,5 +1,5 @@
-import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { CheckCircle2, Package, ArrowRight, ShieldCheck, Download, Clock } from 'lucide-react';
 import { BRAND_CONFIG } from '../config/brandConfig';
 import axios from 'axios';
@@ -8,7 +8,7 @@ const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api`
 
 const OrderSuccess = () => {
   const location = useLocation();
-  const navigate = useLocation().navigate;
+  const navigate = useNavigate();
   const order = location.state?.order || {
     orderId: 'TM-ORD-' + Math.floor(100000 + Math.random() * 900000),
     createdAt: new Date().toISOString(), total: 0, items: [], shippingInfo: {},

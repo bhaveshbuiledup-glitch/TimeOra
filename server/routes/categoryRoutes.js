@@ -7,11 +7,14 @@ const { logError } = require('../utils/logger');
 
 router.get('/', async (req, res) => {
   try {
-    const categories = await Category.find({ isActive: true }).sort({ sortOrder: 1 });
+    let categories = [];
+    if (mongoose.connection.readyState === 1) {
+      categories = await Category.find({ isActive: true }).sort({ sortOrder: 1 }).lean();
+    }
     res.json({ success: true, categories });
   } catch (error) {
     logError(error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.json({ success: true, categories: [] });
   }
 });
 

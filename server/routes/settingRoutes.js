@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { logInfo } = require('../utils/logger');
+const { logError, logInfo } = require('../utils/logger');
 const { TaxConfig, ShippingConfig, Setting } = require('../models/Setting');
 
 router.get('/tax', async (req, res) => {
@@ -8,7 +8,7 @@ router.get('/tax', async (req, res) => {
     const config = await TaxConfig.findOne().sort({ createdAt: -1 }).exec();
     res.json({ success: true, taxRate: config?.taxRate || 0.18, taxName: config?.taxName || 'GST' });
   } catch (error) {
-    logInfo('Tax config error', { error: error.message });
+    logError('Tax config error', { error: error.message });
     res.json({ success: true, taxRate: 0.18, taxName: 'GST' });
   }
 });
@@ -26,7 +26,7 @@ router.put('/tax', async (req, res) => {
     }
     res.json({ success: true, config });
   } catch (error) {
-    logInfo('Tax update error', { error: error.message });
+    logError('Tax update error', { error: error.message });
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
@@ -41,6 +41,7 @@ router.get('/shipping', async (req, res) => {
       expressRate: config?.expressRate || 500,
     });
   } catch (error) {
+    logError('Shipping config error', { error: error.message });
     res.json({ success: true, freeShippingThreshold: 5000, standardRate: 200, expressRate: 500 });
   }
 });

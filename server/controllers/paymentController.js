@@ -10,7 +10,7 @@ if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET && RazorpayCl
   try { razorpay = new RazorpayClass({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_SECRET }); } catch {}
 }
 
-router = require('express').Router();
+const router = require('express').Router();
 
 router.post('/create-order', require('../middleware/authMiddleware').protect, async (req, res) => {
   try {

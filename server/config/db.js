@@ -10,6 +10,7 @@ const connectDB = async () => {
     const conn = await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
+      bufferCommands: false,
     });
     console.log(`[TIMEORA Database] MongoDB Connected: ${conn.connection.host}`);
     return conn;

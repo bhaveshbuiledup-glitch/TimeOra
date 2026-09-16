@@ -53,7 +53,6 @@ const Admin = () => {
     markAvailable, 
     setProductOffer, 
     removeProductOffer,
-    resetCatalog 
   } = useProducts();
 
   const { user } = useAuth();

@@ -1,9 +1,3 @@
-const express = require('express');
-const router = express.Router();
-const mongoose = require('mongoose');
-const { v4: uuidv4 } = require('uuid');
-const { logError } = require('../utils/logger');
-
 const logger = {
   error: (message, meta = {}) => {
     const log = { timestamp: new Date().toISOString(), level: 'error', message, ...meta };

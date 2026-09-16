@@ -43,7 +43,7 @@ const AdminLogin = () => {
           
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="w-12 h-12 rounded-full border border-[#818cf8]/40 mx-auto flex items-center justify-center text-[#818cf8] mb-3 bg-[#181822">
+            <div className="w-12 h-12 rounded-full border border-[#818cf8]/40 mx-auto flex items-center justify-center text-[#818cf8] mb-3 bg-[#181822]"
               <Shield size={24} />
             </div>
             <h1 className="font-['Cinzel'] font-bold text-2xl text-white tracking-wider">

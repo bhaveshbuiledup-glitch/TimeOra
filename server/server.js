@@ -97,24 +97,28 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
+let server;
+
+const startServer = async () => {
+  try {
+    await connectDB();
+  } catch (dbError) {
+    console.warn('[TIMEORA] MongoDB connection failed. Server starting in offline mode with fallback data.');
+    console.warn(`[TIMEORA] DB Error: ${dbError.message}`);
+  }
+
+  server = app.listen(PORT, () => {
+    console.log('\n=================================================');
+    console.log('  TIMEORA Horlogerie Backend Server Running');
+    console.log(`  Mode: ${process.env.NODE_ENV || 'development'} `);
+    console.log(`  Port: ${PORT}                                  `);
+    console.log(`  URL:  http://localhost:${PORT}/api/status     `);
+    console.log('=================================================\n');
+  });
+};
+
 if (require.main === module) {
-  (async () => {
-    try {
-      await connectDB();
-      app.listen(PORT, () => {
-        console.log('\n=================================================');
-        console.log('  TIMEORA Horlogerie Backend Server Running');
-        console.log(`  Mode: ${process.env.NODE_ENV || 'development'} `);
-        console.log(`  Port: ${PORT}                                  `);
-        console.log(`  URL:  http://localhost:${PORT}/api/status     `);
-        console.log('=================================================\n');
-      });
-    } catch (error) {
-      console.error(`\n[FATAL] Server startup failed: ${error.message}`);
-      console.error('[FATAL] Could not connect to MongoDB. Exiting.\n');
-      process.exit(1);
-    }
-  })();
+  startServer();
 }
 
-module.exports = app;
+module.exports = { app, startServer, server };
