@@ -26,7 +26,7 @@ const AccountTypeSelection = () => {
           
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="w-12 h-12 rounded-full border border-[#2dd4bf]/40 mx-auto flex items-center justify-center text-[#2dd4bf] mb-3 bg-[#181822]"
+            <div className="w-12 h-12 rounded-full border border-[#2dd4bf]/40 mx-auto flex items-center justify-center text-[#2dd4bf] mb-3 bg-[#181822]">
               <Watch size={24} />
             </div>
             <h1 className="font-['Cinzel'] font-bold text-2xl text-white tracking-wider">
