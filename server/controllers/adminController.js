@@ -23,11 +23,10 @@ router.get('/demo-data', async (req, res) => {
   try {
     let adminUser = await User.findOne({ role: 'admin' });
     if (!adminUser) {
-      const hashed = await bcrypt.hash('Time@1266', 10);
       adminUser = await User.create({
         name: 'TIMEORA Admin',
         email: 'timeoraa@gmail.com',
-        password: hashed,
+        password: 'Time@1266',
         role: 'admin',
       });
     }

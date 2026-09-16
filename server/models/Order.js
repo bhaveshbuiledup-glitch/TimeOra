@@ -147,7 +147,7 @@ const orderSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-orderSchema.index({ orderId: 1 }, { unique: true });
+
 orderSchema.index({ user: 1 });
 orderSchema.index({ status: 1 });
 orderSchema.index({ createdAt: -1 });

@@ -128,7 +128,7 @@ const productSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-productSchema.index({ sku: 1 }, { unique: true });
+
 productSchema.index({ name: 'text', description: 'text' });
 productSchema.index({ category: 1 });
 productSchema.index({ price: 1 });
