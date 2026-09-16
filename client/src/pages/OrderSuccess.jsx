@@ -1,10 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { CheckCircle2, Package, ArrowRight, ShieldCheck, Download, Clock } from 'lucide-react';
 import { BRAND_CONFIG } from '../config/brandConfig';
-import axios from 'axios';
-
-const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api`;
 
 const OrderSuccess = () => {
   const location = useLocation();
@@ -14,15 +11,30 @@ const OrderSuccess = () => {
     createdAt: new Date().toISOString(), total: 0, items: [], shippingInfo: {},
   };
   const { paymentPending, razorpayData } = location.state || {};
-  const [downloadedInvoice, setDownloadedInvoice] = React.useState(false);
+  const [downloadedInvoice, setDownloadedInvoice] = useState(false);
 
-  const handleDownloadInvoice = async () => {
+  const handleDownloadInvoice = () => {
     try {
-      const token = localStorage.getItem('timeora_token');
-      await axios.get(`${API_URL}/orders/invoice/${order.orderId}`, {
-        responseType: 'blob',
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
+      const invoiceContent = [
+        'TIMEORA Horlogerie & Co.',
+        'Invoice',
+        '',
+        `Order #: ${order.orderId}`,
+        `Date: ${new Date(order.createdAt).toLocaleDateString()}`,
+        `Total: ${BRAND_CONFIG.currency}${order.total?.toLocaleString()}`,
+        '',
+        'Thank you for your purchase!',
+      ].join('\n');
+
+      const blob = new Blob([invoiceContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `TIMEORA-Invoice-${order.orderId}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
       setDownloadedInvoice(true);
     } catch {
       alert('Invoice download failed');

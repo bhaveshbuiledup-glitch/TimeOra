@@ -52,7 +52,7 @@ const Checkout = () => {
 
     try {
       const token = localStorage.getItem('timeora_token');
-      const res = await axios.post(`${API_URL}/orders/checkout`, {
+      const res = await axios.post(`${API_URL}/orders`, {
         items: cartItems.map(item => ({
           productId: item.id, sku: item.sku, name: item.name,
           price: item.price, quantity: item.quantity,
@@ -68,7 +68,7 @@ const Checkout = () => {
 
       if (paymentMethod === 'razorpay' && order._id) {
         try {
-          const payRes = await axios.post(`${API_URL}/payments/razorpay/create-order`, {
+          const payRes = await axios.post(`${API_URL}/payments/create-order`, {
             orderId: order.orderId, amount: order.total,
           }, { headers: { Authorization: `Bearer ${token}` } });
           navigate('/order-success', { state: { order, paymentPending: true, razorpayData: payRes.data } });

@@ -195,8 +195,8 @@ const Admin = () => {
       const res = await axios.post(`${API_BASE}/api/upload`, uploadData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      if (res.data?.success && res.data?.url) {
-        newUrl = res.data.url;
+      if (res.data?.success && res.data?.filePath) {
+        newUrl = res.data.filePath;
       }
     } catch (e) {
       // Fallback
@@ -283,11 +283,11 @@ const Admin = () => {
       const res = await axios.post(`${API_BASE}/api/upload/video`, uploadData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      if (res.data?.success && res.data?.url) {
-        videoUrl = res.data.url;
+      if (res.data?.success && res.data?.filePath) {
+        videoUrl = res.data.filePath;
       }
     } catch (e) {
-      console.warn('Backend video endpoint unreachable, using client FileReader fallback:', err.message);
+      console.warn('Backend video endpoint unreachable, using client FileReader fallback:', e.message);
     }
 
     if (!videoUrl) {

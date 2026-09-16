@@ -1,15 +1,10 @@
+const express = require('express');
+const router = express.Router();
 const mongoose = require('mongoose');
-const { v4: uuidv4 } = require('uuid');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const Product = require('../models/Product');
-const Order = require('../models/Order');
-const Payment = require('../models/Payment');
 const Coupon = require('../models/Coupon');
-const Review = require('../models/Review');
-const Category = require('../models/Category');
-const { AuditLog } = require('../models/Setting');
 const { logError } = require('../utils/logger');
 
 router.get('/health', (req, res) => {
