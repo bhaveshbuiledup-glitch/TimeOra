@@ -7,6 +7,7 @@ import { ProductProvider } from './context/ProductContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
+import VoiceCallButton from './components/VoiceCallButton';
 import SearchOverlay from './components/SearchOverlay';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
@@ -69,6 +70,7 @@ function App() {
         <CartProvider>
           <WishlistProvider>
             <Router>
+              <VoiceCallButton />
               <Routes>
                 <Route path="/" element={<SplashScreen />} />
                 <Route path="/splash" element={<SplashScreen />} />

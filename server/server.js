@@ -1,4 +1,5 @@
 const express = require('express');
+const http = require('http');
 const cors = require('cors');
 const path = require('path');
 const dotenv = require('dotenv');
@@ -6,6 +7,10 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 const connectDB = require('./config/db');
+const CallLog = require('./models/CallLog');
+const { bridgeCall } = require('./services/voiceBridge');
+const { isVoiceConfigured } = require('./routes/voiceRoutes');
+const WebSocket = require('ws');
 
 dotenv.config({ path: path.join(__dirname, '.env') });
 
@@ -91,6 +96,7 @@ app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/categories', require('./routes/categoryRoutes'));
 app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/settings', require('./routes/settingRoutes'));
+app.use('/api/voice', require('./routes/voiceRoutes').router);
 
 app.use(notFound);
 app.use(errorHandler);
@@ -107,7 +113,25 @@ const startServer = async () => {
     console.warn(`[TIMEORA] DB Error: ${dbError.message}`);
   }
 
-  server = app.listen(PORT, () => {
+  server = http.createServer(app);
+  const voiceSockets = new WebSocket.Server({ noServer: true, maxPayload: 1024 * 1024 });
+  server.on('upgrade', async (request, socket, head) => {
+    const requestUrl = new URL(request.url, 'http://localhost');
+    if (requestUrl.pathname !== '/api/voice/stream') return socket.destroy();
+    const callSid = requestUrl.searchParams.get('callSid') || '';
+    if (!isVoiceConfigured() || !/^CA[A-Za-z0-9]{10,40}$/.test(callSid)) return socket.destroy();
+    try {
+      const call = await CallLog.findOne({ providerCallId: callSid, status: 'in-progress' }).select('_id').lean();
+      if (!call) return socket.destroy();
+      voiceSockets.handleUpgrade(request, socket, head, (websocket) => {
+        voiceSockets.emit('connection', websocket, request);
+      });
+    } catch {
+      socket.destroy();
+    }
+  });
+  voiceSockets.on('connection', bridgeCall);
+  server.listen(PORT, () => {
     console.log('\n=================================================');
     console.log('  TIMEORA Horlogerie Backend Server Running');
     console.log(`  Mode: ${process.env.NODE_ENV || 'development'} `);

@@ -53,6 +53,20 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const adminLogin = async (rawLoginId, password) => {
+    const loginId = rawLoginId.toLowerCase().trim();
+    try {
+      const res = await axios.post(`${API_URL}/admin/login`, { loginId, password });
+      const userData = { ...res.data.user, email: res.data.user.email.toLowerCase().trim() };
+      setUser(userData);
+      setToken(res.data.token);
+      return { success: true, user: userData };
+    } catch (err) {
+      const message = err.response?.data?.message || 'Unable to sign in as admin';
+      return { success: false, message };
+    }
+  };
+
   const register = async (name, rawEmail, password) => {
     const email = rawEmail.toLowerCase().trim();
     try {
@@ -79,7 +93,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{
-      user, token, login, register, logout, isAuthenticated: !!user, isAdmin
+      user, token, login, adminLogin, register, logout, isAuthenticated: !!user, isAdmin
     }}>
       {children}
     </AuthContext.Provider>

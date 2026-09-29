@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
@@ -48,6 +48,10 @@ const Login = () => {
               {isLoading ? 'Signing In...' : 'Sign In'}
             </button>
           </form>
+          <p className="mt-5 text-center text-xs text-gray-400">
+            New to TIMEORA?{' '}
+            <Link to="/register" className="font-semibold text-[#2dd4bf] hover:underline">Create an account</Link>
+          </p>
         </div>
       </div>
     </div>

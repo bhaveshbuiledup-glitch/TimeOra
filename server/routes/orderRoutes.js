@@ -214,7 +214,7 @@ router.get('/:id', protect, async (req, res) => {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
-    if (req.user.role !== 'admin' && order.user.toString() !== req.user._id.toString()) {
+    if (req.user.role !== 'admin' && (!order.user || order.user.toString() !== req.user._id.toString())) {
       return res.status(403).json({ success: false, message: 'Not authorized' });
     }
 

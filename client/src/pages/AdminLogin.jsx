@@ -4,12 +4,12 @@ import { Lock, Mail, Shield, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const AdminLogin = () => {
-  const [email, setEmail] = useState('');
+  const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { adminLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -18,7 +18,7 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      const res = await login(email, password);
+      const res = await adminLogin(loginId, password);
       if (res.success) {
         if (res.user?.role === 'admin') {
           navigate('/admin', { replace: true });
@@ -63,16 +63,17 @@ const AdminLogin = () => {
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             <div>
               <label className="block uppercase tracking-wider text-gray-400 mb-2 font-medium">
-                Email Address
+                Admin ID or Email
               </label>
               <div className="relative">
                 <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
                 <input
-                  type="email"
+                  type="text"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@timeora.com"
+                  autoComplete="username"
+                  value={loginId}
+                  onChange={(e) => setLoginId(e.target.value)}
+                  placeholder="Admin ID or email"
                   className="w-full bg-[#171722] border border-[#2c2c3c] rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#818cf8]"
                 />
               </div>

@@ -31,6 +31,7 @@ import {
 import { useProducts } from '../context/ProductContext';
 import { useAuth } from '../context/AuthContext';
 import { BRAND_CONFIG } from '../config/brandConfig';
+import AdminVoicePanel from '../components/AdminVoicePanel';
 
 const PRESET_WATCH_IMAGES = [
   "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200",
@@ -582,6 +583,8 @@ const Admin = () => {
             </div>
           </div>
         </div>
+
+        <AdminVoicePanel />
 
         {/* Action Toolbar */}
         <div className="border rounded-xl p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4" style={{ backgroundColor: '#111827', borderColor: '#1e3048' }}>

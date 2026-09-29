@@ -4,7 +4,6 @@ const orderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
   },
   orderId: {
     type: String,
@@ -143,6 +142,8 @@ const orderSchema = new mongoose.Schema({
   },
   guestEmail: { type: String },
   guestToken: { type: String },
+  source: { type: String, enum: ['website', 'voice'], default: 'website' },
+  voiceIdempotencyKey: { type: String, unique: true, sparse: true },
 }, {
   timestamps: true,
 });

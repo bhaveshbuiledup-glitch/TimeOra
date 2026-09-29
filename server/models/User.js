@@ -27,6 +27,13 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user',
   },
+  adminLoginId: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    sparse: true,
+    unique: true,
+  },
   membershipTier: {
     type: String,
     default: 'TIMEORA Royal Patron',

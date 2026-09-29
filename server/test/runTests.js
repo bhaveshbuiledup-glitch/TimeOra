@@ -14,6 +14,7 @@ const runTests = async () => {
   test('User model loads', () => { const m = require('../models/User'); if (!m.modelName) throw new Error('No modelName'); });
   test('Product model loads', () => { const m = require('../models/Product'); if (!m.modelName) throw new Error('No modelName'); });
   test('Order model loads', () => { const m = require('../models/Order'); if (!m.modelName) throw new Error('No modelName'); });
+  test('CallLog model loads', () => { const m = require('../models/CallLog'); if (!m.modelName) throw new Error('No modelName'); });
   test('Category model loads', () => { const m = require('../models/Category'); if (!m.modelName) throw new Error('No modelName'); });
   test('Coupon model loads', () => { const m = require('../models/Coupon'); if (!m.modelName) throw new Error('No modelName'); });
   test('Review model loads', () => { const m = require('../models/Review'); if (!m.modelName) throw new Error('No modelName'); });
@@ -22,6 +23,7 @@ const runTests = async () => {
   test('Order routes load', () => { const r = require('../routes/orderRoutes'); if (!r.stack) throw new Error('No stack'); });
   test('Product routes load', () => { const r = require('../routes/productRoutes'); if (!r.stack) throw new Error('No stack'); });
   test('Payment routes load', () => { const r = require('../routes/paymentRoutes'); if (!r.stack) throw new Error('No stack'); });
+  test('Voice routes load', () => { const r = require('../routes/voiceRoutes').router; if (!r.stack) throw new Error('No stack'); });
   test('Coupon routes load', () => { const r = require('../routes/couponRoutes'); if (!r.stack) throw new Error('No stack'); });
   test('Controller imports work', () => {
     require('../controllers/authController');

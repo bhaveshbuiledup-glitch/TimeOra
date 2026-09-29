@@ -80,6 +80,51 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.post('/admin/login', async (req, res) => {
+  try {
+    const { email, loginId, password } = req.body;
+    const cleanLoginId = (loginId || email || '').toLowerCase().trim();
+
+    if (!cleanLoginId || !password) {
+      return res.status(400).json({ success: false, message: 'Please provide admin ID and password' });
+    }
+
+    const user = await User.findOne({
+      role: 'admin',
+      $or: [{ email: cleanLoginId }, { adminLoginId: cleanLoginId }],
+    }).select('+password');
+
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Invalid admin credentials' });
+    }
+
+    if (user.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied. Admin privileges required.' });
+    }
+
+    if (!await user.matchPassword(password)) {
+      return res.status(401).json({ success: false, message: 'Invalid admin credentials' });
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({ success: false, message: 'Admin account deactivated' });
+    }
+
+    user.lastLogin = new Date();
+    await user.save();
+
+    const token = generateToken(user._id);
+    res.json({
+      success: true,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role, membershipTier: user.membershipTier, isVerified: user.isVerified },
+      token,
+    });
+  } catch (error) {
+    console.error('Admin login error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 router.post('/logout', (req, res) => {
   res.json({ success: true, message: 'Logged out' });
 });
